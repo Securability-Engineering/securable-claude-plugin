@@ -1,2 +1,80 @@
 # securable-claude-plugin
-A Claude Code plugin offering secure code generation through application of the FIASSE - The Securable Plugin
+
+A Claude Code plugin offering secure code generation and securability analysis through application of the FIASSE/SSEM framework.
+
+## Overview
+
+This plugin augments Claude Code with two capabilities:
+
+1. **Securability Engineering Review** — Analyze existing code for securable qualities using the nine SSEM attributes across three pillars (Maintainability, Trustworthiness, Reliability), producing scored assessments with actionable findings.
+2. **Securability Engineering Code Generation** — Generate new code that embodies securable qualities by default, applying FIASSE principles as engineering constraints.
+
+## Installation
+
+Add this plugin to your project by cloning it into your workspace or adding it as a git submodule:
+
+```bash
+# Clone directly
+git clone https://github.com/Xcaciv/securable-claude-plugin.git
+
+# Or as a submodule
+git submodule add https://github.com/Xcaciv/securable-claude-plugin.git
+```
+
+Then symlink or copy the `.claude/` directory and `CLAUDE.md` file into your project root, or include the plugin directory in your Claude Code workspace.
+
+## Slash Commands
+
+| Command | Description |
+|---------|-------------|
+| `/securability-review` | Run a full SSEM securability assessment on code |
+| `/secure-generate` | Generate code with FIASSE/SSEM constraints applied |
+| `/fiasse-lookup` | Look up FIASSE/SSEM reference material by topic |
+
+## SSEM Model
+
+The Securable Software Engineering Model (SSEM) defines nine attributes across three pillars:
+
+| **Maintainability** | **Trustworthiness** | **Reliability** |
+|:---------------------|:--------------------:|----------------:|
+| Analyzability        | Confidentiality      | Availability    |
+| Modifiability        | Accountability       | Integrity       |
+| Testability          | Authenticity         | Resilience      |
+
+Each attribute is scored 0–10. Pillar scores are weighted averages. The overall SSEM score is the average of the three pillar scores. See `skills/securability-engineering-review/SKILL.md` for full scoring details.
+
+## Project Structure
+
+```
+CLAUDE.md                          # Plugin entry point — Claude Code reads this first
+.claude/
+  commands/
+    securability-review.md         # /securability-review slash command
+    secure-generate.md             # /secure-generate slash command
+    fiasse-lookup.md               # /fiasse-lookup slash command
+  settings.json                    # Plugin permissions
+.claudeignore                      # Files excluded from context
+data/
+  fiasse/                          # FIASSE RFC reference sections (S2.x–S8.x)
+skills/
+  securability-engineering/        # Code generation wrapper skill
+  securability-engineering-review/ # Code analysis skill
+plays/
+  code-analysis/                   # Step-by-step analysis procedures
+templates/
+  finding.md                       # Individual finding format
+  report.md                        # Full assessment report format
+template/
+  SKILL.md                         # Template for creating new skills
+scripts/
+  extract_fiasse_sections.py       # Utility to extract sections from FIASSE RFC
+```
+
+## References
+
+- [FIASSE RFC](https://github.com/Xcaciv/securable_software_engineering/blob/main/docs/FIASSE-RFC.md) — Framework for Integrating Application Security into Software Engineering
+- [Xcaciv/securable_software_engineering](https://github.com/Xcaciv/securable_software_engineering) — Source repository
+
+## License
+
+CC-BY-4.0 — See [LICENSE](LICENSE)

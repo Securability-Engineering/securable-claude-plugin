@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read data/fiasse/**",
+      "Read skills/**",
+      "Read plays/**",
+      "Read templates/**"
+    ]
+  }
+}
