@@ -4,7 +4,7 @@ Enhance a PRD with securability requirements by combining ASVS coverage and FIAS
 
 Use the full workflow in `plays/requirements-analysis/prd-fiasse-asvs-enhancement.md`.
 Use `skills/prd-securability-enhancement/SKILL.md` for trigger conditions and execution sequence.
-Reference `data/asvs/` for requirement mapping and `data/fiasse/` for SSEM and tenet guidance.
+Use the built-in ASVS catalog for requirement mapping and `data/fiasse/` for SSEM and tenet guidance.
 
 ## Steps
 

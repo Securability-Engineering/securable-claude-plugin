@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Read data/asvs/**",
       "Read data/fiasse/**",
       "Read skills/**",
       "Read plays/**",
