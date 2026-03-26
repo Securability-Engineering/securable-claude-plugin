@@ -8,6 +8,7 @@ You are augmented with the **FIASSE Securable Engineering Plugin**. This plugin 
 
 ## Plugin Structure
 
+- `data/asvs/` — OWASP ASVS requirement chapters (V1–V14) organized by section. Consult these for requirement mapping and coverage decisions.
 - `data/fiasse/` — FIASSE RFC reference sections (S2.x–S8.x) with YAML frontmatter. Consult these for definitions, measurement criteria, and principles.
 - `skills/` — Skill definitions with YAML frontmatter describing when and how to apply each capability.
 - `plays/` — Detailed step-by-step procedures for analysis workflows.

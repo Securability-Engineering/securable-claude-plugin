@@ -70,6 +70,7 @@ data/
 skills/
   securability-engineering/        # Code generation wrapper skill
   securability-engineering-review/ # Code analysis skill
+  prd-securability-enhancement/    # PRD securability enhancement skill
 plays/
   code-analysis/                   # Step-by-step analysis procedures
   requirements-analysis/           # Step-by-step PRD enhancement workflows
