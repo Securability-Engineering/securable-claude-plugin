@@ -26,28 +26,36 @@ Then symlink or copy the `.claude/` directory and `CLAUDE.md` file into your pro
 
 ## Slash Commands
 
-| Command | Description |
-|---------|-------------|
-| `/securability-review` | Run a full SSEM securability assessment on code |
-| `/secure-generate` | Generate code with FIASSE/SSEM constraints applied |
-| `/prd-securability-enhance` | Enhance PRD features with ASVS + FIASSE/SSEM requirements |
-| `/fiasse-lookup` | Look up FIASSE/SSEM reference material by topic |
+| Command                      | Description                                               |
+| ---------------------------- | --------------------------------------------------------- |
+| `/securability-review`       | Run a full SSEM securability assessment on code           |
+| `/secure-generate`           | Generate code with FIASSE/SSEM constraints applied        |
+| `/prd-securability-enhance`  | Enhance PRD features with ASVS + FIASSE/SSEM requirements |
+| `/fiasse-lookup`             | Look up FIASSE/SSEM reference material by topic           |
+
+## Example: PRD Enhancement
+
+See the before/after example in:
+
+- `examples/prd-enhancement/input-prd.md`
+- `examples/prd-enhancement/enhanced-prd.md`
+- `examples/prd-enhancement/README.md`
 
 ## SSEM Model
 
 The Securable Software Engineering Model (SSEM) defines nine attributes across three pillars:
 
 | **Maintainability** | **Trustworthiness** | **Reliability** |
-|:---------------------|:--------------------:|----------------:|
-| Analyzability        | Confidentiality      | Availability    |
-| Modifiability        | Accountability       | Integrity       |
-| Testability          | Authenticity         | Resilience      |
+| ------------------- | :-----------------: | --------------: |
+| Analyzability       |   Confidentiality   |    Availability |
+| Modifiability       |    Accountability   |       Integrity |
+| Testability         |     Authenticity    |      Resilience |
 
 Each attribute is scored 0–10. Pillar scores are weighted averages. The overall SSEM score is the average of the three pillar scores. See `skills/securability-engineering-review/SKILL.md` for full scoring details.
 
 ## Project Structure
 
-```
+```text
 CLAUDE.md                          # Plugin entry point — Claude Code reads this first
 .claude/
   commands/
@@ -72,6 +80,8 @@ template/
   SKILL.md                         # Template for creating new skills
 scripts/
   extract_fiasse_sections.py       # Utility to extract sections from FIASSE RFC
+examples/
+  prd-enhancement/                 # Before/after PRD securability enhancement example
 ```
 
 ## References
