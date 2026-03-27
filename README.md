@@ -1,13 +1,13 @@
 # securable-claude-plugin
 
-A Claude Code plugin offering secure code generation and securability analysis through application of the FIASSE/SSEM framework.
+A Claude Code plugin offering secure code generation and securability analysis through application of the OWASP FIASSE: The Securable framework. Also, part of (OWASP Secure Agent Playbook)[https://github.com/OWASP/secure-agent-playbook].
 
 ## Overview
 
 This plugin augments Claude Code with three capabilities:
 
 1. **Securability Engineering Review** — Analyze existing code for securable qualities using the nine SSEM attributes across three pillars (Maintainability, Trustworthiness, Reliability), producing scored assessments with actionable findings.
-2. **Securability Engineering Code Generation** — Generate new code that embodies securable qualities by default, applying FIASSE principles as engineering constraints.
+2. **Securability Engineering Code Generation** — Generate new code that embodies securable qualities by default, applying OWASP FIASSE principles as engineering constraints.
 3. **PRD Securability Enhancement** — Enhance product requirements documents with ASVS level selection, feature-level ASVS requirement mapping, SSEM implementation annotations, and FIASSE tenet coverage.
 
 ## Installation
