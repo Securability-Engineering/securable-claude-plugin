@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "securable-claude-plugin",
-      "source": ".",
+      "source": "./",
       "description": "Secure code generation, securability analysis, and PRD enhancement through the FIASSE/SSEM framework.",
       "version": "1.0.0",
       "author": {
