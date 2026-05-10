@@ -121,8 +121,12 @@ aggregator and viewer.
 
 ## References
 
-- [FIASSE Framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md) — Framework for Integrating Application Security into Software Engineering
+- [FIASSE Framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md)  referenced version
 - [OWASP/FIASSE](https://github.com/OWASP/FIASSE) — Source repository
+- [OWASP/FIASSE](https://owaspfiasse.org) — Official Home
+- [OWASP secure-agent-playbook](https://github.com/OWASP/secure-agent-playbook) — Larger combined project for agent-oriented guidance
+- [Securability-Engineering](https://github.com/Securability-Engineering) — Organization hosting IDE-specific versions of this plugin
+- [loose-notes_claude_aspnet_pva](https://github.com/Securability-Engineering-Plugin-Tests/loose-notes_claude_aspnet_pva) — Worst-case experiment test project
 
 ## License
 
