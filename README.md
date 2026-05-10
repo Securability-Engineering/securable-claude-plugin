@@ -121,8 +121,8 @@ aggregator and viewer.
 
 ## References
 
-- [FIASSE Framework v1.0.4](https://github.com/Xcaciv/securable_software_engineering/blob/v1.0.4/docs/securable_framework.md) — Framework for Integrating Application Security into Software Engineering
-- [Xcaciv/securable_software_engineering](https://github.com/Xcaciv/securable_software_engineering) — Source repository
+- [FIASSE Framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md) — Framework for Integrating Application Security into Software Engineering
+- [OWASP/FIASSE](https://github.com/OWASP/FIASSE) — Source repository
 
 ## License
 

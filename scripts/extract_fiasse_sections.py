@@ -3,7 +3,7 @@
 Extract FIASSE framework sections (v1.0.4) into structured markdown files
 with YAML frontmatter.
 
-Parses the FIASSE framework markdown (from Xcaciv/securable_software_engineering,
+Parses the FIASSE framework markdown (from OWASP/FIASSE,
 file `docs/securable_framework.md`) and produces one file per logical section
 under data/fiasse/. Each output file has YAML frontmatter (title,
 fiasse_section, ssem_pillar, ssem_attributes, when_to_use, threats, summary)
@@ -21,7 +21,7 @@ Updated for FIASSE v1.0.4. The v1.0.4 framework introduces:
   - Major chapter renumbering (old 4.x -> 5.x, 5.x -> 6.x, 6.x -> 4.x, etc.)
 
 Default upstream source:
-  https://raw.githubusercontent.com/Xcaciv/securable_software_engineering/refs/tags/v1.0.4/docs/securable_framework.md
+  https://raw.githubusercontent.com/OWASP/FIASSE/refs/tags/v1.0.4/docs/securable_framework.md
 """
 
 import re
@@ -1312,7 +1312,7 @@ def main() -> None:
 
             Download the v1.0.4 framework:
               curl -o /tmp/securable_framework.md \\
-                https://raw.githubusercontent.com/Xcaciv/securable_software_engineering/refs/tags/v1.0.4/docs/securable_framework.md
+                https://raw.githubusercontent.com/OWASP/FIASSE/refs/tags/v1.0.4/docs/securable_framework.md
               python scripts/extract_fiasse_sections.py /tmp/securable_framework.md data/fiasse/
             """),
             file=sys.stdout,

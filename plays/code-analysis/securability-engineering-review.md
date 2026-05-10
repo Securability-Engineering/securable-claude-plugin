@@ -129,6 +129,6 @@ Use [templates/report.md](../../templates/report.md) as the assembly scaffold.
 - [skills/securability-engineering-review/SKILL.md](../../skills/securability-engineering-review/SKILL.md) — rubric, weights, severity, output format, 50-item checklist, pattern tags, anti-patterns
 - [templates/finding.md](../../templates/finding.md) — individual finding shape
 - [templates/report.md](../../templates/report.md) — full-report scaffold
-- [FIASSE Framework v1.0.4](https://github.com/Xcaciv/securable_software_engineering/blob/v1.0.4/docs/securable_framework.md)
+- [FIASSE Framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md)
 - ISO/IEC 25010:2011 — Software quality models
 - RFC 4949 — Internet Security Glossary

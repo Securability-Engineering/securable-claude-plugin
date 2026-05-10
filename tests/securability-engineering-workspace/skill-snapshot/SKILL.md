@@ -160,7 +160,7 @@ Generated code that embodies FIASSE securable qualities. When the generation is 
 
 ## FIASSE References
 
-- [FIASSE RFC](https://github.com/Xcaciv/securable_software_engineering/blob/main/docs/FIASSE-RFC.md) — Framework for Integrating Application Security into Software Engineering
+- [FIASSE RFC](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/FIASSE-RFC.md) — Framework for Integrating Application Security into Software Engineering
 - `data/asvs/README.md` — ASVS usage guidance and chapter index for feature requirements
 - `data/asvs/V*.md` — ASVS 5.0 feature-aligned security requirements by chapter
 - `data/fiasse/S2.1.md` – S2.6.md — Foundational Principles

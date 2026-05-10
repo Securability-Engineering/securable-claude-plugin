@@ -1,12 +1,12 @@
 # FIASSE / SSEM Reference Data
 
-61 structured FIASSE section files sourced from the [FIASSE framework v1.0.4](https://github.com/Xcaciv/securable_software_engineering/blob/v1.0.4/docs/securable_framework.md) by Alton Crossley.
+61 structured FIASSE section files sourced from the [FIASSE framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md) by Alton Crossley.
 
 FIASSE (Framework for Integrating Application Security into Software Engineering) provides the overarching strategic approach. SSEM (Securable Software Engineering Model) provides the design language with **10 core attributes** grouped into 3 pillars: Maintainability, Trustworthiness, and Reliability.
 
 ## Source & License
 
-These files are derived from the [Xcaciv/securable_software_engineering](https://github.com/Xcaciv/securable_software_engineering) repository at tag `v1.0.4`. Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+These files are derived from the [OWASP/FIASSE](https://github.com/OWASP/FIASSE) repository at tag `v1.0.4`. Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## File Format
 
@@ -162,7 +162,7 @@ To refresh from upstream:
 
 ```bash
 # Fetch the v1.0.4 framework
-curl -o /tmp/securable_framework.md https://raw.githubusercontent.com/Xcaciv/securable_software_engineering/refs/tags/v1.0.4/docs/securable_framework.md
+curl -o /tmp/securable_framework.md https://raw.githubusercontent.com/OWASP/FIASSE/refs/tags/v1.0.4/docs/securable_framework.md
 # Extract sections using the extraction script
 python scripts/extract_fiasse_sections.py /tmp/securable_framework.md data/fiasse/
 ```

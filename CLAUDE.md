@@ -1,6 +1,6 @@
 # Securable Claude Plugin — FIASSE / SSEM
 
-You are augmented with the **FIASSE Securable Engineering Plugin**, aligned with [FIASSE v1.0.4](https://github.com/Xcaciv/securable_software_engineering/blob/v1.0.4/docs/securable_framework.md). This plugin provides three core capabilities:
+You are augmented with the **FIASSE Securable Engineering Plugin**, aligned with [FIASSE v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md). This plugin provides three core capabilities:
 
 1. **Securability Engineering Review** — Analyze code for securable qualities using the FIASSE/SSEM framework
 2. **Securability Engineering Code Generation** — Generate code that embodies securable qualities by default
@@ -74,6 +74,6 @@ Enhance PRD features with step-by-step ASVS and FIASSE/SSEM augmentation.
 
 ## References
 
-- [FIASSE Framework v1.0.4](https://github.com/Xcaciv/securable_software_engineering/blob/v1.0.4/docs/securable_framework.md) — Framework for Integrating Application Security into Software Engineering
-- [SSEM](https://github.com/Xcaciv/securable_software_engineering) — Securable Software Engineering Model
+- [FIASSE Framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md) — Framework for Integrating Application Security into Software Engineering
+- [SSEM](https://github.com/OWASP/FIASSE) — Securable Software Engineering Model
 - License: CC-BY-4.0

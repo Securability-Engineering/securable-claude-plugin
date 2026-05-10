@@ -8,7 +8,7 @@ license: CC-BY-4.0
 
 Analyze code for securable engineering qualities and produce a structured SSEM scorecard. This file is **authoritative** for the rubric, weights, severity classification, and report shape. The play at [plays/code-analysis/securability-engineering-review.md](../../plays/code-analysis/securability-engineering-review.md) is the step-by-step runbook; consult it for *when* to do each step, not for *what* the rubric says.
 
-Aligned with [FIASSE v1.0.4](https://github.com/Xcaciv/securable_software_engineering/blob/v1.0.4/docs/securable_framework.md). Per-attribute measurement guidance in `data/fiasse/SA.*.md` (Appendix A).
+Aligned with [FIASSE v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md). Per-attribute measurement guidance in `data/fiasse/SA.*.md` (Appendix A).
 
 ## When to Invoke
 
@@ -269,7 +269,7 @@ When invoked:
 
 ## FIASSE & OWASP References
 
-- [FIASSE Framework v1.0.4](https://github.com/Xcaciv/securable_software_engineering/blob/v1.0.4/docs/securable_framework.md)
+- [FIASSE Framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md)
 - FIASSE v1.0.4 SA.* — Appendix A (per-attribute measurement guidance) in `data/fiasse/SA.*.md`
 - ISO/IEC 25010:2011 — Software quality models
 - RFC 4949 — Internet Security Glossary

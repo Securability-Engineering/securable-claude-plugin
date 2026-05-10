@@ -283,7 +283,7 @@ If you catch yourself emitting one of these, stop and rewrite.
 
 ## FIASSE References
 
-- [FIASSE Framework v1.0.4](https://github.com/Xcaciv/securable_software_engineering/blob/v1.0.4/docs/securable_framework.md)
+- [FIASSE Framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md)
 - `data/asvs/README.md` — ASVS chapter index
 - `data/asvs/V*.md` — ASVS 5.0 feature requirements by chapter
 - `data/fiasse/S2.1.md`–`S2.6.md` — Foundational Principles (incl. Transparency S2.5 and Least Astonishment S2.6)
