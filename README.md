@@ -1,13 +1,6 @@
-# securable-claude-plugin
+# securable-claude-plugin <a href="https://www.buymeacoffee.com/xcaciv"> <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="25"> </a>
 
 A Claude Code plugin offering secure code generation and securability analysis through application of the OWASP FIASSE: The Securable framework. Also, part of (OWASP Secure Agent Playbook)[https://github.com/OWASP/secure-agent-playbook].
-
-## Support
-<p align="center">
-  <a href="https://www.buymeacoffee.com/xcaciv">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="25">
-  </a>
-</p>
 
 ## Overview
 
