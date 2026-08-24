@@ -1,7 +1,7 @@
 ---
 title: "SA.2 Measuring Trustworthiness"
 fiasse_section: "SA.2"
-fiasse_version: "1.0.4"
+fiasse_version: "1.1"
 ssem_pillar: "Trustworthiness"
 ssem_attributes:
   - Confidentiality

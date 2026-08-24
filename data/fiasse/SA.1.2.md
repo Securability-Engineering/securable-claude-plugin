@@ -1,7 +1,7 @@
 ---
 title: "SA.1.2 Measuring Modifiability"
 fiasse_section: "SA.1.2"
-fiasse_version: "1.0.4"
+fiasse_version: "1.1"
 ssem_pillar: "Maintainability"
 ssem_attributes:
   - Modifiability

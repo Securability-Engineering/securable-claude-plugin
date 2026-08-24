@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Extract FIASSE framework sections (v1.0.4) into structured markdown files
+Extract FIASSE framework sections (v1.1) into structured markdown files
 with YAML frontmatter.
 
 Parses the FIASSE framework markdown (from OWASP/FIASSE,
@@ -12,17 +12,32 @@ followed by the section content.
 Section files are named S{x.y.z}.md (e.g. S3.2.1.4.md for Observability,
 SA.1.4.md for the Appendix A measurement subsection).
 
-Updated for FIASSE v1.0.4. The v1.0.4 framework introduces:
-  - Observability as a 10th SSEM attribute (under Maintainability)
-  - The Principle of Least Astonishment (Section 2.6)
-  - The Boundary Control Principle (Section 4.3, formerly "Flexibility")
-  - Dependency Stewardship (Section 4.6)
-  - Measurement guidance moved to Appendix A (formerly Section 3.4)
-  - Major chapter renumbering (old 4.x -> 5.x, 5.x -> 6.x, 6.x -> 4.x, etc.)
+Updated for FIASSE v1.1. Relative to v1.0.4, the v1.1 framework introduces:
+  - The Quality-Security Relationship (new Section 2.4), which shifts
+    Aligning Security with Development to 2.5, Transparency to 2.6, and the
+    Principle of Least Astonishment to 2.7
+  - Transparency subsections 2.6.1-2.6.3
+  - "The Request Surface Minimization Principle" renamed and reframed as
+    "The Canonical Parsing Principle" (Section 4.4.1.1), built on
+    "parse, don't validate" and data-structure-as-proof
+  - "The Derived Integrity Principle" renamed to
+    "The Isolated Integrity Principle" (Section 4.4.1.2)
+  - The Securability Report mechanism (Sections 5.2.1-5.2.5)
+  - Security Controls in the Code Creation Process (new Section 6.1 with the
+    Control-as-Requirement and Control-as-Protection fallacies), which shifts
+    Shoveling Left to 6.2 and Strategic Use of Security Output to 6.3
+  - Security-team role subsections 7.1.1-7.1.5
+  - Degraded-Mode Adoption (8.1) and Indicators of Adoption Effectiveness (8.2)
+  - Appendix A.4, Scoring and Enhancement Suggestions
+
+Sections 4.5 (Dependency Management) and 4.6 (Dependency Stewardship) remain
+separate in v1.1; they are consolidated only on unreleased upstream main.
 
 Default upstream source:
-  https://raw.githubusercontent.com/OWASP/FIASSE/refs/tags/v1.0.4/docs/securable_framework.md
+  https://raw.githubusercontent.com/OWASP/FIASSE/refs/tags/v1.1/docs/securable_framework.md
 """
+
+from __future__ import annotations
 
 import re
 import sys
@@ -133,6 +148,26 @@ SECTION_META: dict[str, dict] = {
         ),
     },
     "2.4": {
+        "title": "The Quality-Security Relationship",
+        "ssem_pillar": "Maintainability",
+        "ssem_attributes": ["Analyzability", "Modifiability", "Testability", "Observability"],
+        "when_to_use": [
+            "arguing that engineering quality investment is security investment",
+            "explaining why security effort plateaus against low-quality code",
+            "scoping what code quality can and cannot reach",
+        ],
+        "threats": [
+            "security expertise hitting a hard ceiling set by unmaintainable code",
+            "fixes that introduce new defects because the code resists change",
+            "system behavior under attack that cannot be observed with enough fidelity",
+        ],
+        "summary": (
+            "Security cannot exceed software quality; ISO/IEC 5055 codifies security "
+            "as a structural quality characteristic measurable from source. Every "
+            "downstream security activity is bounded by what the code makes possible."
+        ),
+    },
+    "2.5": {
         "title": "Aligning Security with Development",
         "when_to_use": [
             "integrating security into development using engineering terminology",
@@ -151,7 +186,7 @@ SECTION_META: dict[str, dict] = {
             "(Participation over Assessment)."
         ),
     },
-    "2.5": {
+    "2.6": {
         "title": "The Transparency Principle",
         "ssem_attributes": ["Observability", "Accountability"],
         "when_to_use": [
@@ -171,7 +206,62 @@ SECTION_META: dict[str, dict] = {
             "authorized parties."
         ),
     },
-    "2.6": {
+    "2.6.1": {
+        "title": "Transparency and Maintainability",
+        "ssem_pillar": "Maintainability",
+        "ssem_attributes": ["Analyzability", "Observability"],
+        "when_to_use": [
+            "tracing data flow, state changes, and decision logic through logs",
+            "connecting observability investment to diagnosis speed",
+        ],
+        "threats": [
+            "deficiencies that cannot be diagnosed from external outputs",
+            "change impact that cannot be assessed before shipping",
+        ],
+        "summary": (
+            "A transparent system is easier to debug and understand. Structured logs "
+            "and metrics let developers diagnose deficiencies and assess change "
+            "effects with greater speed and accuracy."
+        ),
+    },
+    "2.6.2": {
+        "title": "Transparency and Trustworthiness",
+        "ssem_pillar": "Trustworthiness",
+        "ssem_attributes": ["Accountability", "Authenticity"],
+        "when_to_use": [
+            "establishing the audit trail that makes attribution possible",
+            "logging authentication and authorization events for verification",
+        ],
+        "threats": [
+            "actions that cannot be uniquely traced to an entity",
+            "authentication events that leave no investigable record",
+        ],
+        "summary": (
+            "Transparency is the mechanism that makes Accountability possible. "
+            "Authenticity is reinforced when authentication and authorization events "
+            "are transparently logged."
+        ),
+    },
+    "2.6.3": {
+        "title": "Transparency Tactics",
+        "ssem_attributes": ["Observability", "Accountability", "Analyzability"],
+        "when_to_use": [
+            "choosing concrete tactics for structured logging and instrumentation",
+            "specifying immutable audit trails for security-sensitive events",
+            "logging boundary outcomes for validation and sanitization steps",
+        ],
+        "threats": [
+            "unstructured logs that resist analysis, monitoring, and alerting",
+            "audit trails missing the who, what, where, when, and why",
+            "trust-boundary events that produce no signal",
+        ],
+        "summary": (
+            "Practical tactics for engineering transparency: meaningful naming, "
+            "version control history, structured log events, immutable audit trails, "
+            "instrumented health metrics, and logging at trust boundaries."
+        ),
+    },
+    "2.7": {
         "title": "The Principle of Least Astonishment",
         "ssem_attributes": ["Analyzability", "Modifiability"],
         "when_to_use": [
@@ -460,7 +550,7 @@ SECTION_META: dict[str, dict] = {
         ],
         "summary": (
             "Property of accuracy and completeness. Applies at both system and data "
-            "levels; supported by the Derived Integrity Principle (Section 4.4.1.2)."
+            "levels; supported by the Isolated Integrity Principle (Section 4.4.1.2)."
         ),
     },
     "3.2.3.3": {
@@ -642,31 +732,34 @@ SECTION_META: dict[str, dict] = {
         ),
     },
     "4.4.1.1": {
-        "title": "The Request Surface Minimization Principle",
-        "ssem_attributes": ["Integrity", "Resilience", "Observability"],
+        "title": "The Canonical Parsing Principle",
+        "ssem_attributes": ["Integrity", "Resilience", "Observability", "Analyzability"],
         "when_to_use": [
-            "designing endpoints that consume only expected named values",
-            "logging and rejecting unexpected input fields in sensitive contexts",
+            "parsing external input into a canonical typed structure at the boundary",
+            "defining an explicit input schema per operation instead of a generic envelope",
+            "logging and rejecting schema deviations in sensitive contexts",
             "detecting reconnaissance and probing behavior",
         ],
         "threats": [
+            "loosely typed data revalidated repeatedly instead of parsed once",
             "blanket processing of request envelopes enabling injection",
             "silent acceptance of unexpected fields enabling reconnaissance",
             "manipulation of derived values via extra fields",
         ],
         "summary": (
-            "Process only the specific named values expected. Log or reject "
-            "deviations; in sensitive contexts, log-and-reject is the more "
-            "defensible posture."
+            "Parse, don't validate: perform one strict parse at the trust boundary "
+            "into a canonical internal type and fail closed if it does not succeed. "
+            "The resulting structure is proof that required invariants hold."
         ),
     },
     "4.4.1.2": {
-        "title": "The Derived Integrity Principle",
+        "title": "The Isolated Integrity Principle",
         "ssem_attributes": ["Integrity", "Authenticity"],
         "when_to_use": [
             "deriving prices, totals, and other authoritative values server-side",
             "managing user permissions and object state from trusted sources",
             "validating JWT signature algorithms server-side",
+            "asking whether an untrusted caller could set or bias a critical value",
         ],
         "threats": [
             "business logic manipulation through client-supplied authoritative values",
@@ -674,9 +767,9 @@ SECTION_META: dict[str, dict] = {
             "client-supplied permission elevation",
         ],
         "summary": (
-            "Any value critical to system or business-logic integrity must be "
-            "derived in a trusted context, never accepted from a client. The client "
-            "expresses intent; the server enforces integrity."
+            "Isolation of authority: integrity-critical facts must be controlled by "
+            "server-side logic and data sources a client cannot set, override, or "
+            "indirectly bias. The client expresses intent; the server enforces facts."
         ),
     },
     "4.5": {
@@ -755,7 +848,92 @@ SECTION_META: dict[str, dict] = {
         ],
         "summary": (
             "Merge reviews are an effective scaling point for securable review and "
-            "knowledge transfer. SSEM attributes provide a shared review basis."
+            "knowledge transfer. SSEM attributes provide a shared review basis. "
+            "Sections 5.2.1-5.2.5 define the mechanism that makes the guardrail "
+            "concrete."
+        ),
+    },
+    "5.2.1": {
+        "title": "The Securability Report",
+        "when_to_use": [
+            "defining the artifact a securability review produces on every merge",
+            "combining automated scanning with reviewer assessment in SSEM vocabulary",
+            "scaling securable review where whole-application review cannot",
+        ],
+        "threats": [
+            "automation output presented without architectural context",
+            "review attention spread evenly instead of directed by risk",
+        ],
+        "summary": (
+            "Every merge produces an informational report: automated analysis scoped "
+            "to the changeset, plus reviewer assessment expressed in SSEM vocabulary. "
+            "Generated unconditionally; blocks nothing by default."
+        ),
+    },
+    "5.2.2": {
+        "title": "The Advisory Default",
+        "when_to_use": [
+            "justifying why the securability report blocks nothing by default",
+            "using merge review as a teaching instrument for SSEM reasoning",
+        ],
+        "threats": [
+            "review friction that turns securability into a compliance ritual",
+            "one-off corrections that never become transferable patterns",
+        ],
+        "summary": (
+            "The report makes securability consequences visible when a change is "
+            "cheapest to discuss. Read this way it is a teaching instrument, turning "
+            "review comments into transferable patterns."
+        ),
+    },
+    "5.2.3": {
+        "title": "Gating as a Policy Decision",
+        "ssem_attributes": ["Accountability"],
+        "when_to_use": [
+            "elevating designated finding classes to blocking status",
+            "designing an override path with recorded authority",
+        ],
+        "threats": [
+            "gating without an override path stalling delivery",
+            "acceptance decisions made without an attributable record",
+        ],
+        "summary": (
+            "Gating is a policy decision, not a framework default. Wherever gating is "
+            "enabled an override path must exist; exercising it is the mechanism "
+            "completing, with the business retaining authority to accept risk."
+        ),
+    },
+    "5.2.4": {
+        "title": "The Audit Trail",
+        "ssem_attributes": ["Accountability"],
+        "when_to_use": [
+            "producing compliance evidence as a by-product of ordinary work",
+            "mapping merge-review records onto CRA and NIST SP 800-218 obligations",
+        ],
+        "threats": [
+            "evidence reconstructed after the fact rather than captured as it happens",
+            "acceptance decisions that cannot be attributed to a named authority",
+        ],
+        "summary": (
+            "The mechanism produces a structured, timestamped, attributable audit "
+            "trail of findings, gating decisions, and overrides. This is what "
+            "proof-based compliance consumes."
+        ),
+    },
+    "5.2.5": {
+        "title": "Posture over Pass Rates",
+        "when_to_use": [
+            "measuring security posture over time rather than per-merge pass rates",
+            "reading recurring overrides as an upstream signal",
+        ],
+        "threats": [
+            "enforcing harder at the merge instead of fixing the requirements gap",
+            "pass rate optimization that hides a systemic weakness",
+        ],
+        "summary": (
+            "What the organization manages is posture over time, not the pass rate of "
+            "individual merges. A recurring override on the same finding class points "
+            "upstream to a requirements or securability gap."
         ),
     },
     "5.3": {
@@ -778,6 +956,73 @@ SECTION_META: dict[str, dict] = {
     # 6. Common AppSec Anti-Patterns
     # -----------------------------------------------------------------------
     "6.1": {
+        "title": "Security Controls in the Code Creation Process",
+        "when_to_use": [
+            "distinguishing catalog controls, requirements, features, and evidence",
+            "translating a control catalog into implementable requirements",
+            "diagnosing why a control-shaped demand cannot be built as written",
+        ],
+        "threats": [
+            "catalog controls handed to development as if they were specifications",
+            "controls assumed satisfied because they are documented somewhere",
+            "unallocated controls that each team assumes the other owns",
+        ],
+        "summary": (
+            "Four artifacts collapse into the word 'control': catalog control, "
+            "security requirement, security feature, and verification evidence. "
+            "Skipping the translation between them produces two predictable failures."
+        ),
+    },
+    "6.1.1": {
+        "title": "The Control-as-Requirement Fallacy",
+        "when_to_use": [
+            "recognizing catalog items presented as programmer specifications",
+            "translating an implementation-agnostic control into acceptance criteria",
+        ],
+        "threats": [
+            "developers expected to infer an implementation from a system-scoped control",
+            "friction landing on development instead of on the missing process",
+        ],
+        "summary": (
+            "Treating a catalog item as a specification the programmer should already "
+            "know to build. A control like AC-3 is not verifiable against a codebase "
+            "until it is translated into observable behavior with criteria."
+        ),
+    },
+    "6.1.2": {
+        "title": "The Control-as-Protection Fallacy",
+        "when_to_use": [
+            "identifying residual code obligations behind externally-satisfied controls",
+            "allocating control ownership across platform, network, process, and code",
+        ],
+        "threats": [
+            "environment-provided protection assumed to be a property of the software",
+            "residual obligations unspecified because 'the control is handled'",
+        ],
+        "summary": (
+            "Reading the documented existence of a control as a property of the "
+            "software. Correctly-external controls still leave residual obligations "
+            "inside the code, such as failing closed when upstream protection is absent."
+        ),
+    },
+    "6.1.3": {
+        "title": "The Requirements Process as the Corrective",
+        "when_to_use": [
+            "allocating, specifying, and verifying the code's share of a control",
+            "using ASVS as a ready-made requirements library",
+            "treating the catalog as a floor rather than a ceiling",
+        ],
+        "threats": [
+            "point-in-time attestation mistaken for a durable property",
+            "control-shaped demands arriving without acceptance criteria",
+        ],
+        "summary": (
+            "Allocation, specification, and adequacy supply what the catalog omits. "
+            "A control describes a protection; a requirement specifies behavior; a "
+            "feature delivers it; evidence proves it."
+        ),
+    },
+    "6.2": {
         "title": "The Shoveling Left Phenomenon",
         "when_to_use": [
             "identifying ineffective AppSec practices",
@@ -794,7 +1039,7 @@ SECTION_META: dict[str, dict] = {
             "corrective discipline is the Actionable Security Intelligence Principle."
         ),
     },
-    "6.1.1": {
+    "6.2.1": {
         "title": "Ineffective Vulnerability Reporting",
         "when_to_use": [
             "improving how scanner findings reach development",
@@ -809,7 +1054,7 @@ SECTION_META: dict[str, dict] = {
             "positives, identify root causes, prioritize impact, and verify fixes."
         ),
     },
-    "6.1.2": {
+    "6.2.2": {
         "title": "Pitfalls of Exploit-First Training",
         "when_to_use": [
             "evaluating developer security training effectiveness",
@@ -824,7 +1069,7 @@ SECTION_META: dict[str, dict] = {
             "engineering principles needed to build inherently securable systems."
         ),
     },
-    "6.2": {
+    "6.3": {
         "title": "Strategic Use of Security Output",
         "when_to_use": [
             "establishing processes for sharing scanning and testing results",
@@ -859,6 +1104,80 @@ SECTION_META: dict[str, dict] = {
             "Security metrics measure partnership effectiveness, not developer "
             "adherence. The security team's effectiveness is limited by software "
             "quality."
+        ),
+    },
+    "7.1.1": {
+        "title": "The Strategic Case for the Shift",
+        "when_to_use": [
+            "justifying the move from end-of-cycle assessment to upstream participation",
+            "locating the leverage point for security effort in the lifecycle",
+        ],
+        "threats": [
+            "security arriving at the end with a finding list",
+            "leverage spent on testing rather than on requirements and design",
+        ],
+        "summary": (
+            "The leverage point is earlier and further upstream than testing. "
+            "Requirements, design, and architecture are where security expectations "
+            "become structural."
+        ),
+    },
+    "7.1.2": {
+        "title": "Capacity Relief Through Agentic AppSec",
+        "when_to_use": [
+            "adopting agentic tooling to free reviewer capacity",
+            "tying freed capacity to specific upstream engagements",
+        ],
+        "threats": [
+            "agentic tooling producing higher-volume Shoveling Left",
+            "capacity freed but never reinvested upstream",
+        ],
+        "summary": (
+            "Agentic tooling relieves the mechanical portion of the reviewer role. "
+            "The capacity it frees must be tied to specific upstream engagements or "
+            "it just increases finding volume."
+        ),
+    },
+    "7.1.3": {
+        "title": "Transition, Not Switchover",
+        "when_to_use": [
+            "sequencing the security team's role change over time",
+            "sustaining assurance work while participation is grown into",
+        ],
+        "threats": [
+            "assurance capability abandoned before participation is established",
+        ],
+        "summary": (
+            "The role shift is a transition, not a switchover. Assurance work "
+            "continues while participation is grown into."
+        ),
+    },
+    "7.1.4": {
+        "title": "Business-Leadership Alignment Is a Precondition",
+        "when_to_use": [
+            "assessing whether the security role shift is viable in an organization",
+            "naming leadership backing as an adoption prerequisite",
+        ],
+        "threats": [
+            "role shift attempted without leadership backing",
+            "adoption failure misdiagnosed as framework failure",
+        ],
+        "summary": (
+            "The shift depends on business-leadership alignment as a precondition, "
+            "not as a later ratification."
+        ),
+    },
+    "7.1.5": {
+        "title": "Staffing Implications",
+        "when_to_use": [
+            "planning the skill mix a participating security team requires",
+        ],
+        "threats": [
+            "staffing profile unchanged while the role's demands change",
+        ],
+        "summary": (
+            "Staffing implications of moving security effort upstream into "
+            "requirements and design participation."
         ),
     },
     "7.2": {
@@ -928,9 +1247,124 @@ SECTION_META: dict[str, dict] = {
             "failed adoption from lack of stakeholder buy-in",
         ],
         "summary": (
-            "Six-step adoption path: assess practices, integrate SSEM terminology, "
-            "identify influencers, educate teams, foster collaboration, and monitor "
-            "continuously."
+            "Seven-step adoption path: assess practices, integrate SSEM terminology, "
+            "identify influencers, educate teams, adopt agentic tooling as capacity "
+            "relief, foster collaboration, and monitor continuously."
+        ),
+    },
+    "8.1": {
+        "title": "Degraded-Mode Adoption",
+        "when_to_use": [
+            "adopting FIASSE where a prerequisite is thin or absent",
+            "naming gaps instead of claiming full adoption",
+        ],
+        "threats": [
+            "claiming full adoption while operating without the prerequisites",
+            "adoption abandoned because a prerequisite is missing",
+        ],
+        "summary": (
+            "FIASSE is adoptable around a gap (sparse requirements, thin senior "
+            "bench, weak review culture) when the gap is named. This is a legitimate "
+            "posture; claiming full adoption without the prerequisites is not."
+        ),
+    },
+    "8.1.1": {
+        "title": "Compensate with Agentic Assistance",
+        "when_to_use": [
+            "expanding throughput where senior-engineer hours are scarce",
+        ],
+        "threats": [
+            "agentic tooling mistaken for the judgment a senior bench provides",
+        ],
+        "summary": (
+            "AI-assisted tooling can expand throughput that would otherwise consume "
+            "scarce senior-engineer hours, without replacing the judgment the bench "
+            "exists to provide."
+        ),
+    },
+    "8.1.2": {
+        "title": "Invest in the Prerequisite First",
+        "when_to_use": [
+            "deciding whether to build the prerequisite before adopting",
+        ],
+        "threats": [
+            "adoption layered on a foundation that cannot support it",
+        ],
+        "summary": (
+            "Where the gap is large, invest in requirements-process work, engineering "
+            "culture, or senior hiring before or alongside adoption."
+        ),
+    },
+    "8.1.3": {
+        "title": "Adopt Partially with Named Gaps",
+        "when_to_use": [
+            "starting with the parts the prerequisites support",
+            "recording what is deferred so partial adoption is not overstated",
+        ],
+        "threats": [
+            "partial adoption mistaken for full adoption",
+        ],
+        "summary": (
+            "Start with what the prerequisites support and name what is deferred, so "
+            "partial adoption is not mistaken for full adoption."
+        ),
+    },
+    "8.2": {
+        "title": "Indicators of Adoption Effectiveness",
+        "when_to_use": [
+            "measuring whether FIASSE adoption is working",
+            "separating leading from lagging adoption signals",
+        ],
+        "threats": [
+            "adoption judged on activity rather than on effect",
+        ],
+        "summary": (
+            "Leading indicators appear within one to two quarters; lagging indicators "
+            "within one to two years. The pattern between them diagnoses adoption "
+            "failure versus framework fit."
+        ),
+    },
+    "8.2.1": {
+        "title": "Leading Indicators",
+        "when_to_use": [
+            "checking for adoption movement within one to two quarters",
+        ],
+        "threats": [
+            "no visible change in how requirements and reviews are conducted",
+        ],
+        "summary": (
+            "Security acceptance criteria appear on user stories as a matter of "
+            "course; threat scenarios are recorded during requirements; merge reviews "
+            "reference SSEM attributes as design language."
+        ),
+    },
+    "8.2.2": {
+        "title": "Lagging Indicators",
+        "when_to_use": [
+            "checking for adoption effect within one to two years",
+        ],
+        "threats": [
+            "findings churn and regressing fixes persisting after adoption",
+        ],
+        "summary": (
+            "Findings churn declines, fixes stay fixed, turnaround shortens, and the "
+            "vulnerability class distribution shifts toward classes outside what "
+            "upstream requirements can reach."
+        ),
+    },
+    "8.2.3": {
+        "title": "Distinguishing Framework Failure from Adoption Failure",
+        "when_to_use": [
+            "diagnosing why indicators are not moving",
+            "deciding between a longer runway and an honest reassessment",
+        ],
+        "threats": [
+            "adoption failure misread as framework failure, or the reverse",
+        ],
+        "summary": (
+            "Leading indicators that do not move point to adoption failure: a missed "
+            "prerequisite or missing leadership backing. Leading indicators moving "
+            "without lagging ones warrants an honest reassessment of fit."
         ),
     },
     # -----------------------------------------------------------------------
@@ -1050,7 +1484,7 @@ SECTION_META: dict[str, dict] = {
         "ssem_attributes": ["Authenticity"],
         "when_to_use": [
             "tracking authentication failures and mechanism coverage",
-            "assessing defendability of authentication mechanisms",
+            "assessing adaptability of authentication mechanisms",
         ],
         "threats": ["brittle authentication that cannot adapt"],
         "summary": "Quantitative and qualitative measures for Authenticity.",
@@ -1105,13 +1539,41 @@ SECTION_META: dict[str, dict] = {
         "threats": ["cascading failures and slow recovery"],
         "summary": "Quantitative and qualitative measures for Resilience.",
     },
+    "A.4": {
+        "title": "Scoring and Enhancement Suggestions",
+        "ssem_pillar": "All",
+        "ssem_attributes": [
+            "Analyzability", "Modifiability", "Testability", "Observability",
+            "Confidentiality", "Accountability", "Authenticity",
+            "Availability", "Integrity", "Resilience",
+        ],
+        "when_to_use": [
+            "combining SSEM indicators into a composite score",
+            "pairing a score with attribute-specific enhancement suggestions",
+            "reporting deltas against a prior scan so change is visible",
+            "deciding when a scored finding needs reviewer confirmation",
+        ],
+        "threats": [
+            "a composite score mistaken for a statement of assurance or compliance",
+            "false precision from a single number standing in for posture",
+            "teams optimizing for the score at the expense of the architecture",
+        ],
+        "summary": (
+            "A composite score is a directional management aid, not a statement of "
+            "assurance. Useful for comparing a system against itself over time and "
+            "for surfacing the weakest attributes first. Pair it with suggestions "
+            "that are attribute-specific, actionable, evidence-based, comparable over "
+            "time, context-aware, and reviewed when material. The most useful output "
+            "has three parts: the score, the rationale, and prioritized changes."
+        ),
+    },
 }
 
 # ---------------------------------------------------------------------------
 # Section-ID mapping to framework heading patterns
 # ---------------------------------------------------------------------------
 # The FIASSE framework uses numbered headings (## 1. Introduction, ### 1.1., etc.).
-# In v1.0.4, headings range from level 2 (chapters) down to level 5
+# In v1.1, headings range from level 2 (chapters) down to level 5
 # (sub-sub-attributes like ##### 4.4.1.1).
 
 # Ordered list of section IDs to extract. Order is significant: each section
@@ -1121,7 +1583,9 @@ TARGET_SECTIONS: list[str] = [
     # 1. Introduction
     "1.1", "1.2",
     # 2. Foundational Principles
-    "2.1", "2.2", "2.3", "2.4", "2.5", "2.6",
+    "2.1", "2.2", "2.3", "2.4", "2.5",
+    "2.6", "2.6.1", "2.6.2", "2.6.3",
+    "2.7",
     # 3. SSEM
     "3.1", "3.2",
     "3.2.1", "3.2.1.1", "3.2.1.2", "3.2.1.3", "3.2.1.4",
@@ -1134,17 +1598,25 @@ TARGET_SECTIONS: list[str] = [
     "4.4", "4.4.1", "4.4.1.1", "4.4.1.2",
     "4.5", "4.6",
     # 5. Integrating Security into Development Processes
-    "5.1", "5.2", "5.3",
+    "5.1",
+    "5.2", "5.2.1", "5.2.2", "5.2.3", "5.2.4", "5.2.5",
+    "5.3",
     # 6. Common AppSec Anti-Patterns
-    "6.1", "6.1.1", "6.1.2", "6.2",
+    "6.1", "6.1.1", "6.1.2", "6.1.3",
+    "6.2", "6.2.1", "6.2.2",
+    "6.3",
     # 7. Roles and Responsibilities
-    "7.1", "7.2", "7.3", "7.4",
+    "7.1", "7.1.1", "7.1.2", "7.1.3", "7.1.4", "7.1.5",
+    "7.2", "7.3", "7.4",
     # 8. Organizational Adoption of FIASSE
     "8",
+    "8.1", "8.1.1", "8.1.2", "8.1.3",
+    "8.2", "8.2.1", "8.2.2", "8.2.3",
     # Appendix A. Measuring SSEM Attributes
     "A.1", "A.1.1", "A.1.2", "A.1.3", "A.1.4",
     "A.2", "A.2.1", "A.2.2", "A.2.3",
     "A.3", "A.3.1", "A.3.2", "A.3.3",
+    "A.4",
 ]
 
 # Map section_id -> regex pattern matching its starting heading in the framework.
@@ -1249,7 +1721,7 @@ def _build_frontmatter(section_id: str) -> str:
         "---",
         f'title: "S{section_id} {title}"',
         f'fiasse_section: "{fm_id}"',
-        'fiasse_version: "1.0.4"',
+        'fiasse_version: "1.1"',
     ]
 
     if "ssem_pillar" in meta:
@@ -1307,12 +1779,12 @@ def main() -> None:
             textwrap.dedent("""\
             Usage: extract_fiasse_sections.py <source.md> [dest_dir]
 
-              source.md  Path to FIASSE framework markdown file (v1.0.4+).
+              source.md  Path to FIASSE framework markdown file (v1.1+).
               dest_dir   Output directory (default: data/fiasse).
 
-            Download the v1.0.4 framework:
+            Download the v1.1 framework:
               curl -o /tmp/securable_framework.md \\
-                https://raw.githubusercontent.com/OWASP/FIASSE/refs/tags/v1.0.4/docs/securable_framework.md
+                https://raw.githubusercontent.com/OWASP/FIASSE/refs/tags/v1.1/docs/securable_framework.md
               python scripts/extract_fiasse_sections.py /tmp/securable_framework.md data/fiasse/
             """),
             file=sys.stdout,

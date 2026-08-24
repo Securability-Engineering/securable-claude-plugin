@@ -1,7 +1,7 @@
 ---
 title: "SA.1 Measuring Maintainability"
 fiasse_section: "SA.1"
-fiasse_version: "1.0.4"
+fiasse_version: "1.1"
 ssem_pillar: "Maintainability"
 ssem_attributes:
   - Analyzability
@@ -18,3 +18,5 @@ summary: "Quantitative and qualitative measurement approaches for Analyzability,
 ---
 
 ### A.1. Measuring Maintainability
+
+The quantitative metrics in this section draw on the SIG maintainability model [Heitlager2007].

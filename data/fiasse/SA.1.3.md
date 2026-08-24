@@ -1,7 +1,7 @@
 ---
 title: "SA.1.3 Measuring Testability"
 fiasse_section: "SA.1.3"
-fiasse_version: "1.0.4"
+fiasse_version: "1.1"
 ssem_pillar: "Maintainability"
 ssem_attributes:
   - Testability

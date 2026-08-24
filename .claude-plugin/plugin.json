@@ -1,7 +1,7 @@
 {
   "name": "securable-claude-plugin",
-  "version": "1.0.4",
-  "description": "Secure code generation, securability analysis, and PRD enhancement through the FIASSE/SSEM framework. Scores ten engineering attributes across three pillars (Maintainability, Trustworthiness, Reliability) and maps requirements to OWASP ASVS controls.",
+  "version": "2.0.0",
+  "description": "Secure code generation, securability analysis, and PRD enhancement through the FIASSE/SSEM framework (targets FIASSE v1.1). Scores ten engineering attributes across three pillars (Maintainability, Trustworthiness, Reliability) at equal weight, and maps product requirements onto OWASP ASVS.",
   "author": {
     "name": "Alton Crossley",
     "url": "https://github.com/Xcaciv"

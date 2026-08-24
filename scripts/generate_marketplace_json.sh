@@ -23,12 +23,15 @@ if [[ ! -f "${PLUGIN_JSON_PATH}" ]]; then
 fi
 
 ZIP_NAME="${PLUGIN_ID}-${TAG}.zip"
+PLUGIN_VERSION="${TAG#v}"
 ZIP_URL="https://github.com/${REPOSITORY}/releases/download/${TAG}/${ZIP_NAME}"
 
 mkdir -p "${DIST_DIR}"
 
 jq -n \
   --arg tag "${TAG}" \
+  --arg version "${PLUGIN_VERSION}" \
+  --arg repo "${REPOSITORY}" \
   --arg zip_url "${ZIP_URL}" \
   --argjson plugin "$(cat "${PLUGIN_JSON_PATH}")" \
   '{
@@ -43,12 +46,12 @@ jq -n \
       {
         name: $plugin.name,
         source: {
-          "source": "github",
-          "repo": "Securability-Engineering/securable-claude-plugin",
-          "ref": "$tag"
+          source: "github",
+          repo: $repo,
+          ref: $tag
         },
         description: ($plugin.description // ""),
-        version: $tag,
+        version: $version,
         author: ($plugin.author // {}),
         homepage: ($plugin.homepage // ""),
         repository: ($plugin.repository // ""),

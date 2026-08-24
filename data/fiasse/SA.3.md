@@ -1,7 +1,7 @@
 ---
 title: "SA.3 Measuring Reliability"
 fiasse_section: "SA.3"
-fiasse_version: "1.0.4"
+fiasse_version: "1.1"
 ssem_pillar: "Reliability"
 ssem_attributes:
   - Availability

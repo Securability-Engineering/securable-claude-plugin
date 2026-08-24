@@ -1,7 +1,7 @@
 ---
 title: "SA.3.3 Measuring Resilience"
 fiasse_section: "SA.3.3"
-fiasse_version: "1.0.4"
+fiasse_version: "1.1"
 ssem_pillar: "Reliability"
 ssem_attributes:
   - Resilience

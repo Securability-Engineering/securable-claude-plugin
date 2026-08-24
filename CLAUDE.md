@@ -1,6 +1,6 @@
 # Securable Claude Plugin — FIASSE / SSEM
 
-You are augmented with the **FIASSE Securable Engineering Plugin**, aligned with [FIASSE v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md). This plugin provides three core capabilities:
+You are augmented with the **FIASSE Securable Engineering Plugin**, aligned with [FIASSE v1.1](https://github.com/OWASP/FIASSE/blob/v1.1/docs/securable_framework.md). This plugin provides three core capabilities:
 
 1. **Securability Engineering Review** — Analyze code for securable qualities using the FIASSE/SSEM framework
 2. **Securability Engineering Code Generation** — Generate code that embodies securable qualities by default
@@ -9,7 +9,7 @@ You are augmented with the **FIASSE Securable Engineering Plugin**, aligned with
 ## Plugin Structure
 
 - `data/asvs/` — OWASP ASVS requirement chapters (V1–V14) organized by section. Consult these for requirement mapping and coverage decisions.
-- `data/fiasse/` — FIASSE framework reference sections (S1.x–S8 plus Appendix A as `SA.x`) with YAML frontmatter. Consult these for definitions, measurement criteria, and principles.
+- `data/fiasse/` — FIASSE framework reference sections (S1.x–S8.x plus Appendix A as `SA.x`) with YAML frontmatter. Consult these for definitions, measurement criteria, and principles.
 - `skills/` — Skill definitions with YAML frontmatter describing when and how to apply each capability.
 - `plays/` — Detailed step-by-step procedures for requirements, code generation, and analysis workflows.
 - `templates/` — Output format templates for findings and reports.
@@ -19,7 +19,7 @@ You are augmented with the **FIASSE Securable Engineering Plugin**, aligned with
 
 ### securability-engineering-review
 
-Analyze code for securable engineering qualities using the SSEM framework. Scores **ten attributes** across three pillars (Maintainability, Trustworthiness, Reliability) on a 0–10 scale.
+Analyze code for securable engineering qualities using the SSEM framework. Scores **ten attributes** across three pillars (Maintainability, Trustworthiness, Reliability) on a 0–10 scale, at equal weight, with a weakest-link floor on the overall score.
 
 **Invoke when**: User asks to review, assess, audit, or evaluate code securability, code quality for security, or FIASSE/SSEM compliance.
 
@@ -50,13 +50,16 @@ Enhance PRD features with step-by-step ASVS and FIASSE/SSEM augmentation.
 ## Guiding Principles
 
 1. **Securable ≠ Secure** — There is no static "secure" state (S2.1). Focus on engineering qualities that enable code to adapt to evolving threats.
-2. **Engineer, Don't Hack** — Build securely through quality attributes, not adversarial/exploit thinking (S2.4).
-3. **Reduce Material Impact** — Aim to reduce the probability of material impact from cyber events through pragmatic, context-appropriate controls (S2.3).
-4. **Transparency** — Generated and reviewed code should be observable: meaningful naming, structured logging, audit trails (S2.5).
-5. **Least Astonishment** — Systems should behave intuitively and predictably; eliminate hidden side effects and surprising boundaries (S2.6).
+2. **Engineer, Don't Hack** — Build securely through quality attributes, not adversarial/exploit thinking (S2.5).
+3. **Reduce Material Impact** — Aim to reduce the probability of material impact from cyber events through pragmatic, context-appropriate engineering, balanced against business objectives (S2.3). Eliminating breaches entirely is not a practical goal.
+4. **Transparency** — Generated and reviewed code should be observable: meaningful naming, structured logging, audit trails (S2.6).
+5. **Least Astonishment** — Systems should behave intuitively and predictably; eliminate hidden side effects and surprising boundaries (S2.7).
 6. **Boundary Control** — Apply strict control at trust boundaries (the "hard shell"); preserve flexibility in the interior (S4.3).
+7. **Canonical Parsing** — Parse, don't validate: one strict parse at each trust boundary into a typed structure, failing closed (S4.4.1.1).
+8. **Isolated Integrity** — Integrity-critical values are derived from server-side authority a client cannot set or bias (S4.4.1.2).
+9. **Scoring Is Directional** — A composite SSEM score is a management aid for tracking a system against itself, never a statement of assurance or compliance (SA.4).
 
-## SSEM Model Quick Reference (v1.0.4 — 10 attributes)
+## SSEM Model Quick Reference (v1.1 — 10 attributes)
 
 | **Maintainability** | **Trustworthiness** | **Reliability** |
 |:--------------------|:-------------------:|----------------:|
@@ -65,7 +68,9 @@ Enhance PRD features with step-by-step ASVS and FIASSE/SSEM augmentation.
 | Testability         | Authenticity        | Resilience      |
 | Observability       |                     |                 |
 
-> **v1.0.4 note**: Observability is the new 10th attribute under Maintainability. Measurement guidance is in Appendix A (`data/fiasse/SA.*.md`).
+> **v1.1 note**: The ten attributes are unchanged from v1.0.4. What changed: "Request Surface Minimization" is now **Canonical Parsing** (S4.4.1.1), "Derived Integrity" is now **Isolated Integrity** (S4.4.1.2), the Transparency Principle moved to S2.6 and Least Astonishment to S2.7, and Appendix A gained **SA.4 Scoring and Enhancement Suggestions**. Measurement guidance is in Appendix A (`data/fiasse/SA.*.md`).
+
+> **Authorization is not an SSEM attribute** (S3.2.2.3). It is a security *feature*, gathered as a requirement and implemented against acceptance criteria. Authenticity, Confidentiality, Integrity, and Accountability are what make it defensible.
 
 ## Output Formats
 
@@ -74,6 +79,6 @@ Enhance PRD features with step-by-step ASVS and FIASSE/SSEM augmentation.
 
 ## References
 
-- [FIASSE Framework v1.0.4](https://github.com/OWASP/FIASSE/blob/v1.0.4/docs/securable_framework.md) — Framework for Integrating Application Security into Software Engineering
+- [FIASSE Framework v1.1](https://github.com/OWASP/FIASSE/blob/v1.1/docs/securable_framework.md) — Framework for Integrating Application Security into Software Engineering
 - [SSEM](https://github.com/OWASP/FIASSE) — Securable Software Engineering Model
 - License: CC-BY-4.0

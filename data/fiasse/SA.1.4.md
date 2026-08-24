@@ -1,7 +1,7 @@
 ---
 title: "SA.1.4 Measuring Observability"
 fiasse_section: "SA.1.4"
-fiasse_version: "1.0.4"
+fiasse_version: "1.1"
 ssem_pillar: "Maintainability"
 ssem_attributes:
   - Observability

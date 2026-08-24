@@ -1,6 +1,6 @@
-# Play: PRD Securability Enhancement (FIASSE v1.0.4 / SSEM + ASVS)
+# Play: PRD Securability Enhancement (FIASSE v1.1 / SSEM + ASVS)
 
-Step-by-step runbook for upgrading a PRD with explicit ASVS coverage and FIASSE v1.0.4 SSEM implementation guidance — *before* code is written.
+Step-by-step runbook for upgrading a PRD with explicit ASVS coverage and FIASSE v1.1 SSEM implementation guidance — *before* code is written.
 
 > **Source of truth**: [skills/prd-securability-enhancement/SKILL.md](../../skills/prd-securability-enhancement/SKILL.md) defines the level rubric, ASVS coverage gap pattern table, output templates, and quality checklist. This play sequences the work — it does not redefine the rubric or templates.
 
@@ -52,14 +52,14 @@ Write a short paragraph surfacing only the SSEM and FIASSE points that materiall
 
 Useful lenses (mention only when relevant):
 
-- Trust-boundary handling and input canonicalization (FIASSE v1.0.4 S4.3, S4.4.1)
-- Derived Integrity (FIASSE v1.0.4 S4.4.1.2)
-- Request Surface Minimization (FIASSE v1.0.4 S4.4.1.1)
-- Observability and audit expectations (FIASSE v1.0.4 S3.2.1.4 + S2.5)
-- Least Astonishment (FIASSE v1.0.4 S2.6)
+- Trust-boundary handling and input canonicalization (FIASSE v1.1 S4.3, S4.4.1)
+- Isolated Integrity (FIASSE v1.1 S4.4.1.2)
+- Canonical Parsing (FIASSE v1.1 S4.4.1.1)
+- Observability and audit expectations (FIASSE v1.1 S3.2.1.4 + S2.6)
+- Least Astonishment (FIASSE v1.1 S2.7)
 - Resilience / availability drivers
 - Testability or modifiability mandates (centralizing crypto/auth)
-- Dependency stewardship (FIASSE v1.0.4 S4.6)
+- Dependency stewardship (FIASSE v1.1 S4.6)
 
 ### 5. Convert into testable acceptance criteria
 
@@ -97,7 +97,7 @@ Produce these sections, using the exact templates in the skill:
 - [skills/prd-securability-enhancement/SKILL.md](../../skills/prd-securability-enhancement/SKILL.md) — level rubric, ASVS gap pattern table, output templates, quality checklist
 - `data/asvs/README.md`
 - `data/asvs/V*.md`
-- `data/fiasse/S2.1.md`–`S2.6.md` — FIASSE v1.0.4 foundational principles (incl. Transparency S2.5, Least Astonishment S2.6)
+- `data/fiasse/S2.1.md`–`S2.7.md` — FIASSE v1.1 foundational principles (incl. Transparency S2.6, Least Astonishment S2.7)
 - `data/fiasse/S3.2.1.md`–`S3.2.3.md` — SSEM attribute umbrellas (incl. `S3.2.1.4.md` Observability)
 - `data/fiasse/S4.3.md`, `S4.4.md`, `S4.4.1.md`, `S4.4.1.1.md`, `S4.4.1.2.md` — Boundary Control, Resilient Coding, Canonical Input Handling
 - `data/fiasse/S4.5.md`, `S4.6.md` — Dependency Management & Stewardship

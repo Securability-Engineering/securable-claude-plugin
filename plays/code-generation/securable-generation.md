@@ -1,4 +1,4 @@
-# Play: End-to-End Securable Code Generation (FIASSE v1.0.4 / SSEM)
+# Play: End-to-End Securable Code Generation (FIASSE v1.1 / SSEM)
 
 Five-step runbook for generating code with a measured securability improvement loop: **enhance requirements → generate → review → improve → report**.
 
@@ -60,7 +60,7 @@ Invoke the `securability-engineering-review` skill against the generated code. C
 Required outputs from Step 3:
 
 - Baseline 10-attribute scores (per attribute, per pillar, overall)
-- Severity-classified findings with FIASSE v1.0.4 pattern tags
+- Severity-classified findings with FIASSE v1.1 pattern tags
 - Prioritized enhancement plan ordered by score-impact and effort
 
 ### Step 4 — Execute enhancements

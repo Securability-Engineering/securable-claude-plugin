@@ -1,7 +1,7 @@
 ---
 title: "SA.3.2 Measuring Integrity"
 fiasse_section: "SA.3.2"
-fiasse_version: "1.0.4"
+fiasse_version: "1.1"
 ssem_pillar: "Reliability"
 ssem_attributes:
   - Integrity
