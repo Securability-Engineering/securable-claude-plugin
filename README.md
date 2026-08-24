@@ -9,13 +9,41 @@ This plugin augments Claude Code with three capabilities:
 1. **Securability Engineering Review** — Analyze existing code for securable qualities using the ten SSEM attributes (FIASSE v1.1) across three pillars (Maintainability, Trustworthiness, Reliability), producing scored assessments with actionable findings.
 2. **Securability Engineering Code Generation** — Generate new code that embodies securable qualities by default, applying OWASP FIASSE principles as engineering constraints.
 3. **PRD Securability Enhancement** — Enhance product requirements documents with ASVS level selection, feature-level ASVS requirement mapping, SSEM implementation annotations, and FIASSE tenet coverage.
+4. **FIASSE Lookup** — Answer FIASSE/SSEM questions (definitions, principles, attributes, scoring conduct, section numbers) from the bundled framework reference, citing section numbers.
+
+Agent-facing guidance lives in [AGENTS.md](AGENTS.md) (the [AGENTS.md standard](https://agents.md) entry point, imported by `CLAUDE.md`). A critical assessment of this plugin and its enhancement roadmap lives in [docs/critical-review-2026-08.md](docs/critical-review-2026-08.md).
 
 ## Installation
 
-Recommended: install through the Claude Code plugin manager.
-You can open the interactive manager with `/plugin`, then use the Discover and Marketplaces tabs to add/install graphically.
+### Claude Code (recommended)
+
+Install through the Claude Code plugin manager: open the interactive manager with `/plugin`, then use the Discover and Marketplaces tabs to add/install graphically.
+
+### opencode and other agent tools
+
+The skills follow the [Agent Skills](https://agentskills.io) standard (`SKILL.md` + YAML frontmatter) and the repo ships a tool-agnostic [AGENTS.md](AGENTS.md) entry point, so the pack also works outside Claude Code:
+
+```bash
+# From a checkout of this repo, into the current project (agent-standard path):
+scripts/install_skills.sh --target .agents
+
+# opencode project config, or global:
+scripts/install_skills.sh --target .opencode
+scripts/install_skills.sh --target "$HOME/.config/opencode"
+
+# Claude Code project skills (without installing the plugin):
+scripts/install_skills.sh --target .claude
+```
+
+The script copies `skills/`, `data/`, `plays/`, and `templates/` together under one root — the layout the skills' internal references depend on.
+
+### Developing this plugin
+
+Run `claude --plugin-dir .` from the repo root so commands and skills load exactly as a plugin install would. Note that the repo's root `CLAUDE.md`/`AGENTS.md` is read only when the repo is opened as a project; installed plugin users get the skills and commands, not that file.
 
 ## Slash Commands
+
+Commands live in `commands/` (the plugin-standard location) and are thin dispatchers — each delegates to its skill, which holds the authoritative procedure.
 
 | Command                      | Description                                               |
 | ---------------------------- | --------------------------------------------------------- |
@@ -60,15 +88,19 @@ The floor keeps a single catastrophic attribute from being averaged away — a s
 ## Project Structure
 
 ```text
-CLAUDE.md                          # Plugin entry point — Claude Code reads this first
+AGENTS.md                          # Canonical agent entry point (AGENTS.md standard, tool-agnostic)
+CLAUDE.md                          # Thin stub importing AGENTS.md (project-mode Claude Code)
+.claude-plugin/
+  plugin.json                      # Plugin manifest (Claude Code)
+  marketplace.json                 # Marketplace manifest
+commands/
+  securability-review.md           # /securability-review — thin dispatcher to the review skill
+  secure-generate.md               # /secure-generate — thin dispatcher to the generation skill
+  prd-securability-enhance.md      # /prd-securability-enhance — thin dispatcher to the PRD skill
+  fiasse-lookup.md                 # /fiasse-lookup — thin dispatcher to the lookup skill
 .claude/
-  commands/
-    securability-review.md         # /securability-review slash command
-    secure-generate.md             # /secure-generate slash command
-    prd-securability-enhance.md    # /prd-securability-enhance slash command
-    fiasse-lookup.md               # /fiasse-lookup slash command
-  settings.json                    # Plugin permissions
-.claudeignore                      # Files excluded from context
+  settings.json                    # Repo-development permissions (not shipped to plugin installs)
+.claudeignore                      # Files excluded from context (repo development only)
 .gitignore                         # Excludes test run artifacts (iteration-*/) from VCS
 data/
   asvs/                            # OWASP ASVS 5.0 requirement chapters (V1–V17)
@@ -77,6 +109,7 @@ skills/
   securability-engineering/        # Code generation wrapper skill
   securability-engineering-review/ # Code analysis skill
   prd-securability-enhancement/    # PRD securability enhancement skill
+  fiasse-lookup/                   # FIASSE/SSEM reference lookup skill
 plays/
   code-generation/                 # Step-by-step code generation workflows
   code-analysis/                   # Step-by-step analysis procedures
@@ -88,8 +121,13 @@ template/
   SKILL.md                         # Template for creating new skills
 scripts/
   extract_fiasse_sections.py       # Utility to extract sections from FIASSE v1.1 framework markdown
+  install_skills.sh                # Layout-preserving installer for opencode / other agent tools
+  build_plugin_zip.sh              # Release zip builder
+  generate_marketplace_json.sh     # Release marketplace manifest builder
 examples/
   prd-enhancement/                 # Before/after PRD securability enhancement example
+docs/
+  critical-review-2026-08.md       # Critical assessment + enhancement plan for this plugin
 tests/                             # Skill regression tests (see Testing below)
   run_tests.py                     # Claude Code CLI test runner
   README.md                        # Test workspace conventions

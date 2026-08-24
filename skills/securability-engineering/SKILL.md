@@ -8,6 +8,8 @@ license: CC-BY-4.0
 
 This skill augments the built-in code generation capability by applying FIASSE v1.1 SSEM principles as engineering constraints. It does **not** perform full SSEM scoring (use `securability-engineering-review` for that).
 
+> **Path resolution**: every `data/`, `plays/`, and `templates/` path in this skill lives at the plugin root — the directory two levels above this SKILL.md file. In a Claude Code plugin install that root is `${CLAUDE_PLUGIN_ROOT}`; in a repo checkout or a copied skills tree, resolve relative to this file (e.g., `../../data/asvs/README.md`). These paths never refer to the user's project.
+
 The end-to-end PRD-enhance → generate → review → enhance → report loop is **opt-in**, not the default. See "Full Loop Mode" below.
 
 Reference data: `data/fiasse/` (especially S2.1–S2.7 foundational principles, S3.2.1–S3.2.3 SSEM attributes including S3.2.1.4 Observability, S2.6 Transparency, S4.3 Boundary Control, S4.4 Resilient Coding, S4.4.1 Canonical Input Handling, S4.6 Dependency Stewardship) and `data/asvs/` for feature-level requirements.
@@ -128,6 +130,7 @@ Don't enumerate all of these in code — pick the ones that *matter for this bou
    - Defensive at trust boundaries, flexible inside (Integrity, Resilience)
    - Observable via structured logging and audit trails (Observability, Accountability)
 8. **Self-Check** — Verify against the Generation Checklist below before returning.
+9. **Verify with real tools when available** — a checklist pass is a claim; a tool run is evidence. If the project already has a formatter, linter, typechecker, or test runner, run it on the generated code and fix what it finds before returning. If a security scanner is present (semgrep, bandit, gosec, eslint security rules, `npm audit` / `pip-audit` / `osv-scanner` for the dependency step), run that too and treat its findings as review input. When no tooling exists, say so in the Securability Notes trade-offs instead of implying verification happened — and do not install new tools uninvited.
 
 ## Output Format
 

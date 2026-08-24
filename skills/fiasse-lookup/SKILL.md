@@ -1,6 +1,16 @@
+---
+name: fiasse-lookup
+description: Answer questions about FIASSE v1.1 and SSEM from the bundled framework reference — definitions, principles (Securable Paradigm, Boundary Control, Canonical Parsing, Isolated Integrity, Transparency, Least Astonishment), the ten SSEM attributes, scoring conduct (SA.4), merge-review guidance (S5.2), and section lookups by number (e.g. "S4.4.1.2"). Trigger on "what does FIASSE say about…", "explain SSEM/securability/securable", "define <attribute>", or any FIASSE/SSEM section reference. Answer from the bundled data, citing section numbers — not from memory.
+license: CC-BY-4.0
+---
+
+# FIASSE / SSEM Reference Lookup
+
 Look up the FIASSE/SSEM reference material for the specified topic and provide a concise explanation with practical guidance.
 
-Reference `data/fiasse/` sections to find the relevant content. Each section file has YAML frontmatter (including `fiasse_version: 1.1`) with `when_to_use` triggers that help match the query.
+> **Path resolution**: every `data/` path in this skill lives at the plugin root — the directory two levels above this SKILL.md file. In a Claude Code plugin install that root is `${CLAUDE_PLUGIN_ROOT}`; in a repo checkout or a copied skills tree, resolve relative to this file (e.g., `../../data/fiasse/S2.1.md`). These paths never refer to the user's project.
+
+Reference `data/fiasse/` sections to find the relevant content. Each section file has YAML frontmatter (including `fiasse_version: 1.1`) with `when_to_use` triggers that help match the query. Ground every answer in the section text — open the file and cite the section number rather than answering from memory.
 
 ## SSEM Quick Reference (FIASSE v1.1 — 10 attributes)
 
@@ -31,6 +41,10 @@ Reference `data/fiasse/` sections to find the relevant content. Each section fil
 
 > **Renamed in v1.1**: "Request Surface Minimization" is now **Canonical Parsing** (S4.4.1.1); "Derived Integrity" is now **Isolated Integrity** (S4.4.1.2). If a query uses the old name, answer with the new one and note the rename.
 
-## Arguments
+## Query Handling
 
-- `$ARGUMENTS` — The FIASSE/SSEM topic to look up (e.g., "integrity", "trust boundaries", "input validation", "transparency", "observability", "least astonishment", "boundary control", "scoring", "securability report", "S3.2.2").
+Accept a topic in any form — an attribute name ("integrity"), a concept ("trust boundaries", "least astonishment"), a section number ("S3.2.2"), or a question ("what does FIASSE say about scoring?"). Match it against the section index above and the `when_to_use` frontmatter, read the matching `data/fiasse/` file(s), and answer concisely with:
+
+1. The definition or principle, in plain language
+2. The section citation (e.g., FIASSE v1.1 S4.4.1.2)
+3. One concrete engineering implication for the user's current context, when known

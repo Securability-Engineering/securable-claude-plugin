@@ -19,6 +19,9 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Validate ASVS/FIASSE references against bundled data
+        run: python3 scripts/check_refs.py
+
       - name: Build plugin zip and sha
         run: bash scripts/build_plugin_zip.sh "${GITHUB_REF_NAME}"
 

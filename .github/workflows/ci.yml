@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Validate ASVS/FIASSE references against bundled data
+        run: python3 scripts/check_refs.py
+
+      - name: Validate JSON manifests and eval sets parse
+        run: |
+          python3 - <<'EOF'
+          import json, glob, sys
+          paths = [
+              ".claude-plugin/plugin.json",
+              ".claude-plugin/marketplace.json",
+              ".claude/settings.json",
+          ] + glob.glob("tests/*/evals/evals.json")
+          for p in paths:
+              with open(p, encoding="utf-8") as f:
+                  json.load(f)
+              print(f"ok {p}")
+          EOF
+
+      - name: Shell-check build and install scripts
+        run: |
+          bash -n scripts/build_plugin_zip.sh
+          bash -n scripts/generate_marketplace_json.sh
+          bash -n scripts/install_skills.sh
+
+      - name: Verify plugin layout (commands and skills at plugin root)
+        run: |
+          test -f .claude-plugin/plugin.json
+          ls commands/*.md >/dev/null
+          for s in securability-engineering securability-engineering-review prd-securability-enhancement fiasse-lookup; do
+            test -f "skills/$s/SKILL.md"
+          done
+          echo "plugin layout ok"
