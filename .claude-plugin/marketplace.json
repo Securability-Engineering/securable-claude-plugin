@@ -11,7 +11,7 @@
       "name": "securable-claude-plugin",
       "source": "./",
       "description": "Secure code generation, securability analysis, and PRD enhancement through the FIASSE/SSEM framework (targets FIASSE v1.1).",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": {
         "name": "Alton Crossley"
       },

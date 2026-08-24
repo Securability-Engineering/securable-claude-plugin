@@ -42,9 +42,15 @@ rsync -av \
   --exclude "dist" \
   --exclude ".DS_Store" \
   --exclude ".*.swp" \
+  --exclude "tests" \
+  --exclude ".github" \
+  --exclude ".vscode" \
+  --exclude ".claude" \
+  --exclude "template" \
   ./ "${PLUGIN_DIR}/"
 
-# Ensure packaged plugin metadata lives at the plugin root with release version.
+# Stamp the release version into the canonical manifest (.claude-plugin/plugin.json).
+# Claude Code reads the manifest from .claude-plugin/, not from a root-level copy.
 PYTHON_BIN=""
 if command -v python3 >/dev/null 2>&1; then
   PYTHON_BIN="python3"
@@ -57,9 +63,10 @@ fi
 
 "${PYTHON_BIN}" - <<PYEOF
 import json
+import os
 
 source_path = "${PLUGIN_JSON_SOURCE}"
-target_path = "${PLUGIN_DIR}/plugin.json"
+target_path = "${PLUGIN_DIR}/.claude-plugin/plugin.json"
 version = "${PLUGIN_VERSION}"
 
 with open(source_path, "r", encoding="utf-8") as f:
@@ -67,6 +74,7 @@ with open(source_path, "r", encoding="utf-8") as f:
 
 plugin["version"] = version
 
+os.makedirs(os.path.dirname(target_path), exist_ok=True)
 with open(target_path, "w", encoding="utf-8") as f:
     json.dump(plugin, f, indent=2)
     f.write("\n")
