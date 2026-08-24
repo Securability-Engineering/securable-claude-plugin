@@ -47,30 +47,32 @@ When a finding maps to an ASVS section, reference the specific requirement:
 
 Use the `when_to_use` frontmatter to match tasks to relevant ASVS sections. For example, if reviewing code that handles file uploads, check:
 - `V5.1` — File Handling Documentation
-- `V5.2` — File Validation
+- `V5.2` — File Upload and Content
 - `V5.3` — File Storage
 
 ## Chapter Index
 
+> **ASVS 5.0 renumbered its chapters.** The index below is derived from the `title` frontmatter of the files in this directory and is the authoritative mapping for this plugin. Do **not** use pre-5.0 chapter numbers (in ASVS 4.x, V2 was Authentication and V4 was Access Control — in 5.0 those topics live in V6 and V8).
+
 | Chapter | Topic | Sections |
 |---------|-------|----------|
-| V1 | Security Architecture | V1.1-V1.5 |
-| V2 | Authentication | V2.1-V2.4 |
-| V3 | Session Management | V3.1-V3.7 |
-| V4 | Access Control | V4.1-V4.4 |
+| V1 | Encoding and Sanitization | V1.1-V1.5 |
+| V2 | Validation and Business Logic (incl. Anti-automation) | V2.1-V2.4 |
+| V3 | Web Frontend Security (cookies, headers, origin separation) | V3.1-V3.7 |
+| V4 | API and Web Service (incl. GraphQL, WebSocket) | V4.1-V4.4 |
 | V5 | File Handling | V5.1-V5.4 |
-| V6 | Cryptography | V6.1-V6.8 |
-| V7 | Error/Logging | V7.1-V7.6 |
-| V8 | Data Protection | V8.1-V8.4 |
-| V9 | API/Web Services | V9.1-V9.2 |
-| V10 | Configuration | V10.1-V10.7 |
-| V11 | Business Logic | V11.1-V11.7 |
-| V12 | Input Validation | V12.1-V12.3 |
-| V13 | Output Encoding | V13.1-V13.4 |
-| V14 | Secure Communication | V14.1-V14.3 |
-| V15 | Security in Dev | V15.1-V15.4 |
-| V16 | Sensitive Data | V16.1-V16.5 |
-| V17 | Malicious Code | V17.1-V17.3 |
+| V6 | Authentication (passwords, MFA, recovery) | V6.1-V6.8 |
+| V7 | Session Management | V7.1-V7.6 |
+| V8 | Authorization | V8.1-V8.4 |
+| V9 | Self-contained Tokens (JWT etc.) | V9.1-V9.2 |
+| V10 | OAuth and OIDC | V10.1-V10.7 |
+| V11 | Cryptography | V11.1-V11.7 |
+| V12 | Secure Communication (TLS) | V12.1-V12.3 |
+| V13 | Configuration (incl. Secret Management) | V13.1-V13.4 |
+| V14 | Data Protection | V14.1-V14.3 |
+| V15 | Secure Coding and Architecture (incl. Dependencies, Concurrency) | V15.1-V15.4 |
+| V16 | Security Logging and Error Handling | V16.1-V16.5 |
+| V17 | WebRTC | V17.1-V17.3 |
 
 ## Updating
 

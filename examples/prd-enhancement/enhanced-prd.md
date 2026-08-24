@@ -15,11 +15,11 @@
 
 | Feature | ASVS Section | Requirement ID (example) | Level | Coverage | PRD Change Needed |
 | ------- | ------------ | ------------------------ | ----- | -------- | ----------------- |
-| F-01 User Sign-In | V2 Authentication, V3 Session Management | 2.1.x, 3.1.x | 2 | Partial | Add password policy, failed-login handling, session rotation and expiry |
-| F-02 Task CRUD API | V4 Access Control, V12 Input Validation, V9 API | 4.1.x, 12.1.x, 9.1.x | 2 | Missing | Add object-level authorization, server-side validation, rate limits |
-| F-03 File Attachments | V5 File Handling, V12 Input Validation, V8 Data Protection | 5.2.x, 12.2.x, 8.1.x | 2 | Missing | Add file-type allowlist, malware scan, secure storage and retrieval controls |
-| F-04 Activity Feed | V7 Error and Logging, V4 Access Control | 7.2.x, 4.2.x | 2 | Partial | Add audit event schema, feed visibility restrictions, log safety rules |
-| F-05 Reminder Notifications | V10 Configuration, V14 Communication | 10.1.x, 14.1.x | 2 | Partial | Add secure mail transport requirements, retry/timeout policy, secret handling |
+| F-01 User Sign-In | V6 Authentication, V7 Session Management | 6.2.x, 6.3.x, 7.2.x | 2 | Partial | Add password policy, failed-login handling, session rotation and expiry |
+| F-02 Task CRUD API | V8 Authorization, V2 Validation and Business Logic, V4 API and Web Service | 8.2.x, 2.2.x, 4.1.x | 2 | Missing | Add object-level authorization, server-side validation, rate limits |
+| F-03 File Attachments | V5 File Handling, V2 Validation and Business Logic, V14 Data Protection | 5.2.x, 2.2.x, 14.2.x | 2 | Missing | Add file-type allowlist, malware scan, secure storage and retrieval controls |
+| F-04 Activity Feed | V16 Security Logging and Error Handling, V8 Authorization | 16.3.x, 8.2.x | 2 | Partial | Add audit event schema, feed visibility restrictions, log safety rules |
+| F-05 Reminder Notifications | V13 Configuration, V12 Secure Communication | 13.3.x, 12.2.x | 2 | Partial | Add secure mail transport requirements, retry/timeout policy, secret handling |
 
 Coverage legend:
 
@@ -32,7 +32,7 @@ Coverage legend:
 
 ### Feature F-01: User Sign-In
 
-**ASVS Mapping**: V2, V3
+**ASVS Mapping**: V6, V7
 
 **Updated Requirements**:
 
@@ -45,7 +45,7 @@ Coverage legend:
 
 ### Feature F-02: Task CRUD API
 
-**ASVS Mapping**: V4, V9, V12
+**ASVS Mapping**: V8, V2, V4
 
 **Updated Requirements**:
 
@@ -58,7 +58,7 @@ Coverage legend:
 
 ### Feature F-03: File Attachments
 
-**ASVS Mapping**: V5, V8, V12
+**ASVS Mapping**: V5, V2, V14
 
 **Updated Requirements**:
 
@@ -71,7 +71,7 @@ Coverage legend:
 
 ### Feature F-04: Activity Feed
 
-**ASVS Mapping**: V4, V7
+**ASVS Mapping**: V16, V8
 
 **Updated Requirements**:
 
@@ -83,7 +83,7 @@ Coverage legend:
 
 ### Feature F-05: Reminder Notifications
 
-**ASVS Mapping**: V10, V14
+**ASVS Mapping**: V13, V12
 
 **Updated Requirements**:
 
