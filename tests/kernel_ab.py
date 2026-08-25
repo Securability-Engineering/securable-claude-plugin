@@ -50,9 +50,18 @@ DETECTORS: dict[str, tuple[str, str]] = {
 
 def detect(name: str, text: str) -> bool:
     if name == "requests_no_timeout":
-        return bool(re.search(r"\brequests\.(get|post|put|delete|head|request)\s*\(", text)) and "timeout" not in text
+        calls = re.finditer(r"\brequests\.(?:get|post|put|delete|head|request)\s*\((?P<args>[^)]*)\)",
+                            text, flags=re.S)
+        for match in calls:
+            if not re.search(r"\btimeout\s*=", match.group("args")):
+                return True
+        return False
     if name == "jwt_verify_unpinned":
-        return bool(re.search(r"\bjwt\.verify\s*\(", text)) and "algorithms" not in text
+        calls = re.finditer(r"\bjwt\.verify\s*\((?P<args>[^)]*)\)", text, flags=re.S)
+        for match in calls:
+            if not re.search(r"\balgorithms\s*:", match.group("args")):
+                return True
+        return False
     desc, pattern = DETECTORS[name]
     assert pattern is not None, name
     return bool(re.search(pattern, text))
