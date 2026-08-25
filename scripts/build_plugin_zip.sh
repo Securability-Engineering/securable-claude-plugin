@@ -49,8 +49,9 @@ rsync -av \
   --exclude "template" \
   ./ "${PLUGIN_DIR}/"
 
-# Stamp the release version into the canonical manifest (.claude-plugin/plugin.json).
-# Claude Code reads the manifest from .claude-plugin/, not from a root-level copy.
+# Stamp the release version into every agent manifest (.claude-plugin/ is the
+# canonical one Claude Code reads; .cursor-plugin/ and .devin-plugin/ must stay
+# in lockstep with it — scripts/check_manifests.py enforces that in CI).
 PYTHON_BIN=""
 if command -v python3 >/dev/null 2>&1; then
   PYTHON_BIN="python3"
@@ -65,19 +66,41 @@ fi
 import json
 import os
 
-source_path = "${PLUGIN_JSON_SOURCE}"
-target_path = "${PLUGIN_DIR}/.claude-plugin/plugin.json"
+plugin_dir = "${PLUGIN_DIR}"
 version = "${PLUGIN_VERSION}"
 
-with open(source_path, "r", encoding="utf-8") as f:
+with open("${PLUGIN_JSON_SOURCE}", "r", encoding="utf-8") as f:
     plugin = json.load(f)
-
 plugin["version"] = version
 
+target_path = os.path.join(plugin_dir, ".claude-plugin/plugin.json")
 os.makedirs(os.path.dirname(target_path), exist_ok=True)
 with open(target_path, "w", encoding="utf-8") as f:
     json.dump(plugin, f, indent=2)
     f.write("\n")
+
+for rel in (".cursor-plugin/plugin.json", ".devin-plugin/plugin.json"):
+    manifest_path = os.path.join(plugin_dir, rel)
+    if not os.path.isfile(manifest_path):
+        continue
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+    manifest["version"] = version
+    with open(manifest_path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2)
+        f.write("\n")
+
+marketplace_path = os.path.join(plugin_dir, ".claude-plugin/marketplace.json")
+if os.path.isfile(marketplace_path):
+    with open(marketplace_path, "r", encoding="utf-8") as f:
+        marketplace = json.load(f)
+    plugins = marketplace.get("plugins")
+    if isinstance(plugins, list) and plugins:
+        if isinstance(plugins[0], dict):
+            plugins[0]["version"] = version
+    with open(marketplace_path, "w", encoding="utf-8") as f:
+        json.dump(marketplace, f, indent=2)
+        f.write("\n")
 PYEOF
 
 # --- ZIP ---

@@ -26,16 +26,61 @@ Run everything CI runs with `scripts/run_checks.sh`.
 
 ## Installation
 
-### Claude Code (recommended)
+One skills tree, one adapter per agent — the multi-agent packaging methodology of [obra/superpowers](https://github.com/obra/superpowers). Each supported harness gets a root-level adapter (a manifest in that harness's plugin format, or an agent-followable `INSTALL.md`), and every adapter points at the same `skills/` + `data/` tree. `scripts/check_manifests.py` (run by CI) keeps the manifests in lockstep.
 
-Install through the Claude Code plugin manager: open the interactive manager with `/plugin`, then use the Discover and Marketplaces tabs to add/install graphically.
+| Agent | Adapter | Install |
+| ----- | ------- | ------- |
+| Claude Code | `.claude-plugin/` | `/plugin` marketplace |
+| Cursor | `.cursor-plugin/` | plugin marketplace, or kernel rule + skills copy |
+| Devin | `.devin-plugin/` | `devin plugins install Securability-Engineering/securable-claude-plugin` |
+| opencode | `.opencode/INSTALL.md` | fetch-and-follow |
+| Any AGENTS.md/SKILL.md agent | `.agents/INSTALL.md` | fetch-and-follow, or `scripts/install_skills.sh` |
 
-### opencode and other agent tools
+### Claude Code
 
-The skills follow the [Agent Skills](https://agentskills.io) standard (`SKILL.md` + YAML frontmatter) and the repo ships a tool-agnostic [AGENTS.md](AGENTS.md) entry point, so the pack also works outside Claude Code:
+Install through the Claude Code plugin manager: open the interactive manager with `/plugin`, then use the Discover and Marketplaces tabs to add/install graphically. Or from this repository's marketplace manifest:
+
+```text
+/plugin marketplace add Securability-Engineering/securable-claude-plugin
+/plugin install securable-claude-plugin@securable-claude-plugins
+```
+
+### Cursor
+
+`.cursor-plugin/plugin.json` declares the pack in Cursor's plugin format, with `skills` pointing at the shared `skills/` tree — in Cursor Agent chat, install with `/add-plugin` (or search "securable" in the plugin marketplace, where listed). Independent of the plugin, the always-apply securability kernel rule ships pre-generated at `bindings/cursor/securable.mdc`; copy it into your project's `.cursor/rules/` to bind every generation to the kernel.
+
+### Devin
+
+Install from this repository:
 
 ```bash
-# From a checkout of this repo, into the current project (agent-standard path):
+devin plugins install Securability-Engineering/securable-claude-plugin
+```
+
+Update later with `devin plugins update securable-claude-plugin`. The manifest lives at `.devin-plugin/plugin.json`.
+
+### opencode
+
+Tell opencode:
+
+```text
+Fetch and follow instructions from https://raw.githubusercontent.com/Securability-Engineering/securable-claude-plugin/refs/heads/main/.opencode/INSTALL.md
+```
+
+Or by hand: [.opencode/INSTALL.md](.opencode/INSTALL.md) — a clone plus `scripts/install_skills.sh --target .opencode` (project) or `--target "$HOME/.config/opencode"` (global).
+
+### Any AGENTS.md / SKILL.md agent (Codex, Zed, Amp, …)
+
+The skills follow the [Agent Skills](https://agentskills.io) standard (`SKILL.md` + YAML frontmatter) and the repo ships a tool-agnostic [AGENTS.md](AGENTS.md) entry point, so the pack works in any conforming harness. Tell the agent:
+
+```text
+Fetch and follow instructions from https://raw.githubusercontent.com/Securability-Engineering/securable-claude-plugin/refs/heads/main/.agents/INSTALL.md
+```
+
+Or run the installer yourself from a checkout:
+
+```bash
+# Into the current project (agent-standard path):
 scripts/install_skills.sh --target .agents
 
 # opencode project config, or global:
@@ -46,7 +91,7 @@ scripts/install_skills.sh --target "$HOME/.config/opencode"
 scripts/install_skills.sh --target .claude
 ```
 
-The script copies `skills/`, `data/`, `plays/`, and `templates/` together under one root — the layout the skills' internal references depend on.
+The script copies `skills/`, `data/`, `plays/`, and `templates/` (plus `schema/`, `core/`, and `rules/`) together under one root — the layout the skills' internal references depend on.
 
 ### Developing this plugin
 
@@ -113,8 +158,16 @@ schema/
 rules/
   opengrep/securable.yaml          # Held-check rule pack mapped to the anti-pattern tags
 .claude-plugin/
-  plugin.json                      # Plugin manifest (Claude Code)
+  plugin.json                      # Plugin manifest (Claude Code) — canonical version source
   marketplace.json                 # Marketplace manifest
+.cursor-plugin/
+  plugin.json                      # Plugin manifest (Cursor) — kept in lockstep
+.devin-plugin/
+  plugin.json                      # Plugin manifest (Devin) — kept in lockstep
+.opencode/
+  INSTALL.md                       # Agent-followable install instructions (opencode)
+.agents/
+  INSTALL.md                       # Agent-followable install instructions (any AGENTS.md/SKILL.md agent)
 commands/
   securability-review.md           # /securability-review — thin dispatcher to the review skill
   secure-generate.md               # /secure-generate — thin dispatcher to the generation skill
@@ -147,6 +200,7 @@ scripts/
   build_bindings.py                # Kernel -> bindings generator (--check = CI drift guard)
   validate_securable.py            # Securable-contract validator (shape + semantics + ASVS existence)
   check_refs.py                    # ASVS/FIASSE reference integrity checker
+  check_manifests.py               # Per-agent manifest lockstep checker (name/version/license)
   securability_report.sh           # Merge-time Securability Report via any agent CLI
   test_opengrep_rules.sh           # Rule-pack test runner (skips if opengrep absent)
   run_checks.sh                    # Everything CI runs, in one command
@@ -205,7 +259,7 @@ aggregator and viewer.
 
 The plugin carries its own semantic version, independent of the FIASSE version it targets.
 
-- **Plugin version** (`.claude-plugin/plugin.json`) — semver for this plugin's own behaviour. A major bump means the review output changed incompatibly. `2.0.0` is the first release of the ten-attribute, equal-weight scoring model with a weakest-link floor.
+- **Plugin version** (`.claude-plugin/plugin.json`) — semver for this plugin's own behaviour. A major bump means the review output changed incompatibly. `2.0.0` is the first release of the ten-attribute, equal-weight scoring model with a weakest-link floor. The per-agent manifests (`.cursor-plugin/`, `.devin-plugin/`, and `plugins[0]` in `marketplace.json`) carry the same version; `scripts/check_manifests.py` fails CI if they drift, and `scripts/build_plugin_zip.sh` stamps all of them at release time.
 - **FIASSE target version** — the framework release the reference data is extracted from. Recorded machine-readably in the `fiasse_version` frontmatter of every file under `data/fiasse/`, and in prose here and in `CLAUDE.md`.
 
 The two moved together through `1.0.4` and no longer do. Tracking a new FIASSE release is not automatically a major plugin bump, and a scoring change is a major bump whether or not FIASSE moved.
