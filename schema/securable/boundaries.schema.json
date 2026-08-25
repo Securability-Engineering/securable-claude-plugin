@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securability.engineering/schema/securable/boundaries.schema.json",
+  "title": "Trust boundary map (.securable/boundaries.yaml)",
+  "description": "Repo-resident map of the system's trust boundaries (FIASSE v1.1 S4.2, S4.3). Maintained like code; read by any harness so generation starts from the map instead of rediscovering it.",
+  "type": "object",
+  "required": ["securable_contract", "boundaries"],
+  "additionalProperties": false,
+  "properties": {
+    "securable_contract": { "const": 1 },
+    "system": { "type": "string" },
+    "boundaries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "kind": { "enum": ["http", "rpc", "queue", "file", "cli", "env", "webhook", "db", "third-party", "other"] },
+          "description": { "type": "string", "minLength": 1 },
+          "entry_points": { "type": "array", "items": { "type": "string" } },
+          "data": { "type": "array", "items": { "type": "string" }, "description": "Data classes crossing this boundary (credentials, pii, payment, content, telemetry, ...)." },
+          "authority": { "type": "string", "description": "The server-side authority behind this boundary (session store, IdP, ownership table) — the source Isolated Integrity derives from." },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

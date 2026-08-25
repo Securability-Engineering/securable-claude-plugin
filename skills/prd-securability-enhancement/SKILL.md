@@ -129,6 +129,15 @@ Ambiguous "secure" or "robust" language is not acceptable here.
 
 Produce these sections in order, using the exact templates below.
 
+### Step 7 — Emit the machine-readable contract
+
+Alongside the prose PRD, write the same requirements as a **securable contract**: `.securable/requirements.yaml` (and `.securable/boundaries.yaml` for the trust-boundary map discovered in Step 1). This is the artifact that outlives the session — any code-generation harness reads it, the generation skill implements against it and flips `status: planned → implemented`, and merge review flips `implemented → verified` with evidence. Never emit a requirement here that lacks a testable acceptance criterion (that would be a control citation, not a requirement — FIASSE v1.1 S6.1.1).
+
+- Shape: `schema/securable/requirements.schema.json` and `schema/securable/boundaries.schema.json` (paths relative to the plugin root); worked example in `examples/securable/`.
+- Every ASVS reference must exist in `data/asvs/`; run `scripts/validate_securable.py --dir .securable` after writing and fix anything it rejects before finishing.
+- Requirements above the chosen baseline level carry `level` and `escalation: true`.
+- Write the contract into the **user's project** at `.securable/` (ask before creating the directory if the project layout is unclear).
+
 ## ASVS Coverage Gap Pattern Table
 
 These are the gaps PRDs reliably miss. When you see one of the trigger phrasings on the left, add the named requirements on the right — they are almost always missing in the source artifact.
@@ -219,6 +228,10 @@ Controls that span multiple features (centralized logging, secrets management, d
 ### E. Open Gaps and Assumptions
 
 Anything you could not resolve from the input: missing system context, unclear data sensitivity, unstated user populations, deferred decisions. Be explicit so the team can close these before implementation.
+
+### F. Securable Contract (machine-readable)
+
+The `.securable/requirements.yaml` / `.securable/boundaries.yaml` pair from Step 7, validated. In the prose artifact, reference it with one line and the validator command; do not duplicate its contents inline.
 
 ## Worked Example (Mini)
 

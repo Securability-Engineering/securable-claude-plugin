@@ -1,0 +1,55 @@
+# Securable requirements contract — example
+# Emitted by prd-securability-enhancement; consumed by any code-generation
+# harness; verified at merge review. Validate with scripts/validate_securable.py.
+securable_contract: 1
+asvs_level: 2
+system: Customer portal
+generated_by: prd-securability-enhancement@2.2.0
+
+features:
+  - id: F-03
+    title: Password reset via email
+    actor: Unauthenticated user (claiming an account)
+    data: [email, credential, reset-token]
+    boundaries: [browser-api, api-email, api-credential-store]
+    requirements:
+      - id: F-03-R1
+        text: Users request a password reset by entering an account email at /reset.
+        asvs: [V2.2.1]
+        acceptance:
+          - Email input is canonicalized and validated against a strict format; malformed input returns 422 without side effects.
+        status: planned
+      - id: F-03-R2
+        text: The endpoint returns the same response whether or not the email matches an account.
+        asvs: [V6.3.8]
+        level: 3
+        escalation: true
+        acceptance:
+          - Non-existent and existing emails produce identical body, status code, and timing within tolerance in an automated test.
+        status: planned
+      - id: F-03-R3
+        text: Reset tokens are single-use, expire within 15 minutes, and are stored only as a salted hash.
+        asvs: [V6.4.1]
+        acceptance:
+          - A token cannot be redeemed after 15 minutes or after first successful use; both produce a generic failure and a logged reset_token_invalid event.
+        status: planned
+      - id: F-03-R4
+        text: Reset requests are rate-limited per email and per source IP.
+        asvs: [V2.4.1]
+        acceptance:
+          - More than 5 requests for one email within 10 minutes are rejected with HTTP 429 and logged.
+        status: planned
+      - id: F-03-R5
+        text: All reset requests, token issuances, redemptions, and password changes are logged with user ID, source IP, user agent, and outcome.
+        asvs: [V16.3.1]
+        acceptance:
+          - Audit log lines for reset events are queryable by user ID and contain the listed fields.
+        status: planned
+
+cross_cutting:
+  - id: CC-R1
+    text: Security events across all features share one structured schema with sensitive-field redaction.
+    asvs: [V16.2]
+    acceptance:
+      - A schema check in CI rejects security-event log calls missing actor, action, target, or outcome.
+    status: planned

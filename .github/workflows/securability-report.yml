@@ -1,0 +1,59 @@
+# Securability Report on pull requests (FIASSE v1.1 S5.2.1) — EXAMPLE, opt-in.
+#
+# Advisory by default (S5.2.2): the report is posted as a PR comment to direct
+# attention; it is not a required check. Making it required is a deliberate
+# policy decision (S5.2.3), not a default.
+#
+# To adopt in your repository:
+#   1. Copy this file into .github/workflows/ and copy (or vendor) the
+#      securable-skills repo so scripts/ and skills/ resolve.
+#   2. Provide credentials for your agent CLI (for claude: ANTHROPIC_API_KEY).
+#   3. Optionally set AGENT_CLI to a different agent ("codex exec", "opencode run").
+#
+# This workflow is disabled in the securable-skills repo itself (workflow_dispatch
+# only) — it exists as the reference implementation for consuming repositories.
+
+name: Securability Report
+
+on:
+  workflow_dispatch:
+  # In a consuming repository, replace workflow_dispatch with:
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install agent CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Produce report
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AGENT_CLI: claude -p --output-format text
+        run: |
+          BASE="origin/${{ github.base_ref || 'main' }}"
+          bash scripts/securability_report.sh --base "$BASE" --head HEAD --out securability_report.md
+
+      - name: Post as PR comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file securability_report.md
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: securability-report
+          path: securability_report.md

@@ -1,0 +1,25 @@
+# Trust boundary map — example (FIASSE v1.1 S4.2, S4.3)
+# Maintained like code; any harness reads this so generation starts from the
+# map instead of rediscovering it. Validate with scripts/validate_securable.py.
+securable_contract: 1
+system: Customer portal
+
+boundaries:
+  - id: browser-api
+    kind: http
+    description: Public HTTPS API consumed by the browser SPA.
+    entry_points: ["POST /reset", "POST /login", "GET /orders/{id}"]
+    data: [credentials, pii]
+    authority: Session store keyed by server-issued cookie; user identity never taken from request bodies.
+
+  - id: api-email
+    kind: third-party
+    description: Outbound transactional email provider.
+    data: [email, reset-links]
+    authority: Provider credentials from the secret manager; templates fixed server-side.
+
+  - id: api-credential-store
+    kind: db
+    description: Credential and reset-token store.
+    data: [credential-hashes, token-hashes]
+    authority: Ownership scoping enforced in the repository layer; tokens stored only as salted hashes.

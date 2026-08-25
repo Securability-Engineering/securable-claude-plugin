@@ -12,29 +12,11 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Validate ASVS/FIASSE references against bundled data
-        run: python3 scripts/check_refs.py
+      - name: Install check dependencies
+        run: pip install pyyaml
 
-      - name: Validate JSON manifests and eval sets parse
-        run: |
-          python3 - <<'EOF'
-          import json, glob, sys
-          paths = [
-              ".claude-plugin/plugin.json",
-              ".claude-plugin/marketplace.json",
-              ".claude/settings.json",
-          ] + glob.glob("tests/*/evals/evals.json")
-          for p in paths:
-              with open(p, encoding="utf-8") as f:
-                  json.load(f)
-              print(f"ok {p}")
-          EOF
-
-      - name: Shell-check build and install scripts
-        run: |
-          bash -n scripts/build_plugin_zip.sh
-          bash -n scripts/generate_marketplace_json.sh
-          bash -n scripts/install_skills.sh
+      - name: Fast checks (refs, contract, bindings, detectors, manifests, scripts)
+        run: bash scripts/run_checks.sh
 
       - name: Verify plugin layout (commands and skills at plugin root)
         run: |
@@ -44,3 +26,15 @@ jobs:
             test -f "skills/$s/SKILL.md"
           done
           echo "plugin layout ok"
+
+  semgrep-pack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install semgrep
+        run: pip install semgrep
+
+      - name: Test the securable rule pack against its fixtures
+        run: bash scripts/test_semgrep_rules.sh

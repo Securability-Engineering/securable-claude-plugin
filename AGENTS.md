@@ -9,16 +9,32 @@ This repository is an agent skill pack (and Claude Code plugin) that augments a 
 
 This file is the canonical agent entry point ([AGENTS.md standard](https://agents.md)). `CLAUDE.md` imports it; do not duplicate guidance between the two.
 
+<!-- securable-kernel:begin (generated from core/kernel.md — edit there, run scripts/build_bindings.py) -->
+## Securable engineering (always apply)
+
+1. **Parse, don't trust.** Input crossing a trust boundary (HTTP/RPC, queue, file, CLI, env, webhook, foreign DB rows) is parsed once at the boundary into a typed structure — only expected named fields, failing closed.
+2. **Authority is server-side.** Identity, ownership, tenancy, role, and money/state come from authenticated server-side sources, never from client-supplied values or unverified claims.
+3. **Never emit:** string-built SQL/shell/paths; JWT verification without pinned algorithm+audience+issuer; mass assignment from raw request bodies; bare catch-alls or silent failure; unbounded reads; external calls without timeouts; secrets in code/logs/errors; non-constant-time secret comparison.
+4. **Observable security.** Security-relevant actions emit structured events (actor, action, target, outcome); failure paths log; errors shown to callers never leak internals.
+5. **Securability Notes.** Close security-relevant work with 2–4 lines: boundaries handled, decisions a reviewer must see, anything unverified.
+
+If `.securable/requirements.yaml` exists it is the authoritative security-requirements source: implement to its acceptance criteria and flip `status` planned→implemented only. Depth on demand via the securable skills: securability-engineering (generation) · securability-engineering-review (SSEM scoring) · prd-securability-enhancement (requirements) · fiasse-lookup (reference).
+<!-- securable-kernel:end -->
+
 ## Repository Layout
 
+- `core/kernel.md` — The **securability kernel**: the ~300-token always-on distillation. Single source of truth; every binding is generated from it.
+- `bindings/` — **Generated** per-harness kernel bindings (Cursor rule, Copilot instructions, Gemini CLI context, Aider conventions). Never edit — run `scripts/build_bindings.py`.
 - `skills/<name>/SKILL.md` — Skill definitions in the [Agent Skills](https://agentskills.io) format (YAML frontmatter + instructions). These are the authoritative procedure definitions.
 - `commands/` — Thin slash-command dispatchers for Claude Code plugin installs. Each delegates to its skill; they hold no procedure content of their own.
+- `schema/securable/` — JSON Schemas for the **securable contract** (`.securable/requirements.yaml` + `.securable/boundaries.yaml` in consuming projects). See `docs/securable-contract.md`; validator: `scripts/validate_securable.py`.
+- `rules/semgrep/` — Held-check semgrep pack mapping the skills' anti-pattern tags to enforceable rules; fixtures in `tests/semgrep-fixtures/`.
 - `data/asvs/` — OWASP **ASVS 5.0** requirement chapters (V1–V17), one file per section, with `when_to_use` frontmatter. Authoritative for requirement IDs — confirm every cited ID against these files.
 - `data/fiasse/` — FIASSE v1.1 reference sections (S1.x–S8.x plus Appendix A as `SA.x`) with YAML frontmatter. Authoritative for definitions, measurement criteria, and principles.
 - `plays/` — Step-by-step runbooks sequencing multi-skill workflows.
 - `templates/` — Output format templates (`finding.md`, `report.md`).
-- `scripts/` — Build, data-extraction, and installation utilities.
-- `tests/` — Skill regression workspaces driven by `tests/run_tests.py` (LLM-as-judge grading).
+- `scripts/` — Build, validation, installation, and report utilities (`build_bindings.py`, `validate_securable.py`, `check_refs.py`, `securability_report.sh`, `install_skills.sh`).
+- `tests/` — Skill regression workspaces (`run_tests.py`, LLM-as-judge), the contract validator tests, the kernel A/B workspace (`kernel_ab.py`), and the semgrep fixtures.
 
 **Path resolution rule**: paths like `data/asvs/README.md` inside skills, commands, and plays are relative to this repository/plugin root — never to the user's project. In a Claude Code plugin install the root is `${CLAUDE_PLUGIN_ROOT}`; anywhere else, resolve relative to the referencing file's position in this tree.
 
@@ -99,11 +115,19 @@ Answer FIASSE/SSEM questions (definitions, principles, attributes, scoring condu
 ## Testing
 
 ```bash
-# Requires the `claude` CLI on PATH and Python 3.9+
+scripts/run_checks.sh                 # everything CI runs: refs, contract, bindings, detectors, manifests
+python3 scripts/check_refs.py         # ASVS/FIASSE references resolve against data/
+python3 tests/securable-contract/test_validate.py
+python3 scripts/build_bindings.py --check
+python3 tests/kernel_ab.py --self-test
+SEMGREP_BIN=semgrep scripts/test_semgrep_rules.sh   # needs semgrep installed
+
+# Skill-behavior regression (requires the `claude` CLI on PATH):
 python tests/run_tests.py tests/securability-engineering-workspace --grade
+python3 tests/kernel_ab.py            # kernel A/B against the agent CLI
 ```
 
-See `tests/README.md` for conventions. When changing a skill, run its workspace before and after; assertions include ASVS 5.0 numbering correctness.
+See `tests/README.md` for workspace conventions. When changing a skill, run its workspace before and after; assertions include ASVS 5.0 numbering correctness. When changing `core/kernel.md`, rebuild bindings and re-run the A/B workspace.
 
 ## References
 

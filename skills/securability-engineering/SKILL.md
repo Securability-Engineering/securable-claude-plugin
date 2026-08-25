@@ -112,6 +112,7 @@ Don't enumerate all of these in code — pick the ones that *matter for this bou
 
 ## Steps (Default Mode)
 
+0. **Honor the contract, if present** — If the project contains `.securable/requirements.yaml`, it is the authoritative requirements source for the features it covers: read the matching feature's requirements and acceptance criteria before generating, and design to satisfy them. Read `.securable/boundaries.yaml` (when present) as the trust-boundary map instead of rediscovering boundaries. After generating, flip each satisfied requirement's `status: planned → implemented` in the contract file and list the flipped IDs in the Securability Notes. Never set `verified` — that flip belongs to review or CI, backed by evidence. If the generated code cannot satisfy a covered requirement, say so explicitly in the trade-offs; do not silently drop it.
 1. **Identify Context** — Language, framework, system type, data sensitivity, exposure level, trust boundaries, feature category.
 2. **Map Feature Requirements to ASVS** — Use `data/asvs/README.md` and the relevant `data/asvs/V*.md` chapters to identify the security requirements applying to the feature being generated.
 3. **Apply SSEM Constraints** — Enforce the attribute rules in the tables above. Consult `data/fiasse/S3.2.1.md`–`S3.2.3.md` for umbrella definitions.

@@ -30,6 +30,7 @@ REPO = Path(__file__).resolve().parent.parent
 SCAN_TARGETS = [
     "AGENTS.md",
     "README.md",
+    "core",
     "skills",
     "commands",
     "plays",
