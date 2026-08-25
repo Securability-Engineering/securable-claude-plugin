@@ -89,6 +89,18 @@ for rel in (".cursor-plugin/plugin.json", ".devin-plugin/plugin.json"):
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
         f.write("\n")
+
+marketplace_path = os.path.join(plugin_dir, ".claude-plugin/marketplace.json")
+if os.path.isfile(marketplace_path):
+    with open(marketplace_path, "r", encoding="utf-8") as f:
+        marketplace = json.load(f)
+    plugins = marketplace.get("plugins")
+    if isinstance(plugins, list) and plugins:
+        if isinstance(plugins[0], dict):
+            plugins[0]["version"] = version
+    with open(marketplace_path, "w", encoding="utf-8") as f:
+        json.dump(marketplace, f, indent=2)
+        f.write("\n")
 PYEOF
 
 # --- ZIP ---

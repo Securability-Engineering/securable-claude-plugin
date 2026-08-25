@@ -19,6 +19,7 @@ Exit status: 0 when consistent, 1 with one line per problem otherwise.
 import json
 import sys
 from pathlib import Path
+from typing import Optional
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -34,30 +35,30 @@ INSTALL_DOCS = [
 LOCKSTEP_FIELDS = ["name", "version", "license", "repository"]
 
 
-def load(rel: str, errors: list) -> dict:
+def load(rel: str, errors: list) -> Optional[dict]:
     path = REPO_ROOT / rel
     if not path.is_file():
         errors.append(f"{rel}: missing")
-        return {}
+        return None
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         errors.append(f"{rel}: invalid JSON ({exc})")
-        return {}
+        return None
 
 
 def main() -> int:
     errors: list = []
 
     canonical = load(CANONICAL, errors)
-    if not canonical:
+    if canonical is None:
         for line in errors:
             print(f"FAIL {line}", file=sys.stderr)
         return 1
 
     for rel in MIRROR_MANIFESTS:
         manifest = load(rel, errors)
-        if not manifest:
+        if manifest is None:
             continue
         for field in LOCKSTEP_FIELDS:
             if manifest.get(field) != canonical.get(field):
@@ -70,18 +71,26 @@ def main() -> int:
         skills = manifest.get("skills")
         if skills is not None:
             skills_dir = (REPO_ROOT / skills).resolve()
-            if not skills_dir.is_dir() or not list(skills_dir.glob("*/SKILL.md")):
+            if REPO_ROOT not in skills_dir.parents and skills_dir != REPO_ROOT:
+                errors.append(f"{rel}: skills path {skills!r} resolves outside repo")
+            elif not skills_dir.is_dir() or not list(skills_dir.glob("*/SKILL.md")):
                 errors.append(f"{rel}: skills path {skills!r} has no */SKILL.md")
 
     marketplace = load(".claude-plugin/marketplace.json", errors)
-    plugins = marketplace.get("plugins") or [{}]
-    entry = plugins[0]
-    for field in ["name", "version", "license"]:
-        if entry.get(field) != canonical.get(field):
-            errors.append(
-                f".claude-plugin/marketplace.json: plugins[0].{field} "
-                f"{entry.get(field)!r} != {CANONICAL} {field} {canonical.get(field)!r}"
-            )
+    if marketplace is not None:
+        plugins = marketplace.get("plugins")
+        if not isinstance(plugins, list) or not plugins:
+            errors.append(".claude-plugin/marketplace.json: plugins must be a non-empty array")
+        elif not isinstance(plugins[0], dict):
+            errors.append(".claude-plugin/marketplace.json: plugins[0] must be an object")
+        else:
+            entry = plugins[0]
+            for field in LOCKSTEP_FIELDS:
+                if entry.get(field) != canonical.get(field):
+                    errors.append(
+                        f".claude-plugin/marketplace.json: plugins[0].{field} "
+                        f"{entry.get(field)!r} != {CANONICAL} {field} {canonical.get(field)!r}"
+                    )
 
     for rel in INSTALL_DOCS:
         if not (REPO_ROOT / rel).is_file():
