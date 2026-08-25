@@ -101,6 +101,17 @@ The floor keeps a single catastrophic attribute from being averaged away — a s
 ```text
 AGENTS.md                          # Canonical agent entry point (AGENTS.md standard, tool-agnostic)
 CLAUDE.md                          # Thin stub importing AGENTS.md (project-mode Claude Code)
+core/
+  kernel.md                        # Securability kernel — source of truth for all bindings
+bindings/                          # GENERATED per-harness kernel bindings (never edit)
+  cursor/securable.mdc             # Cursor always-apply rule
+  copilot/copilot-instructions.md  # GitHub Copilot custom instructions
+  gemini/GEMINI.md                 # Gemini CLI context
+  aider/CONVENTIONS.md             # Aider conventions
+schema/
+  securable/                       # JSON Schemas for the securable contract (.securable/*)
+rules/
+  opengrep/securable.yaml          # Held-check rule pack mapped to the anti-pattern tags
 .claude-plugin/
   plugin.json                      # Plugin manifest (Claude Code)
   marketplace.json                 # Marketplace manifest
@@ -133,18 +144,30 @@ template/
 scripts/
   extract_fiasse_sections.py       # Utility to extract sections from FIASSE v1.1 framework markdown
   install_skills.sh                # Layout-preserving installer for opencode / other agent tools
+  build_bindings.py                # Kernel -> bindings generator (--check = CI drift guard)
+  validate_securable.py            # Securable-contract validator (shape + semantics + ASVS existence)
+  check_refs.py                    # ASVS/FIASSE reference integrity checker
+  securability_report.sh           # Merge-time Securability Report via any agent CLI
+  test_opengrep_rules.sh           # Rule-pack test runner (skips if opengrep absent)
+  run_checks.sh                    # Everything CI runs, in one command
   build_plugin_zip.sh              # Release zip builder
   generate_marketplace_json.sh     # Release marketplace manifest builder
 examples/
   prd-enhancement/                 # Before/after PRD securability enhancement example
+  securable/                       # Worked securable-contract example (requirements + boundaries)
 docs/
   critical-review-2026-08.md       # Critical assessment + enhancement plan for this plugin
-tests/                             # Skill regression tests (see Testing below)
-  run_tests.py                     # Claude Code CLI test runner
+  securable-contract.md            # The securable contract: files, lifecycle, validation
+tests/                             # Regression tests (see Testing below)
+  run_tests.py                     # Claude Code CLI test runner (skill workspaces)
+  kernel_ab.py                     # Kernel A/B runner + detector self-tests
   README.md                        # Test workspace conventions
   prd-securability-enhancement-workspace/
   securability-engineering-workspace/
   securability-engineering-review-workspace/
+  kernel-ab-workspace/             # Kernel A/B evals (naturalistic prompts, deterministic grading)
+  securable-contract/              # Contract validator tests
+  opengrep-fixtures/               # Paired fail/pass fixtures for the rule pack
 ```
 
 ## Testing

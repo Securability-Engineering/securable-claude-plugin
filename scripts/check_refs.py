@@ -38,6 +38,12 @@ SCAN_TARGETS = [
     "examples",
 ]
 
+# Scanned for references too (regexes run over raw text, so YAML rule
+# metadata like `asvs: V9.1` / `fiasse: S3.2.2.3` is covered).
+EXTRA_GLOBS = [
+    "rules/**/*.yaml",
+]
+
 ASVS_DIR = REPO / "data" / "asvs"
 FIASSE_DIR = REPO / "data" / "fiasse"
 
@@ -55,6 +61,8 @@ def iter_files() -> list[Path]:
             files.append(path)
         elif path.is_dir():
             files.extend(sorted(path.rglob("*.md")))
+    for pattern in EXTRA_GLOBS:
+        files.extend(sorted(REPO.glob(pattern)))
     return files
 
 

@@ -105,3 +105,19 @@ to provide.
 One assertion is a deliberate negative check: it requires the current principle
 name (Isolated Integrity) and names the retired one (Derived Integrity) as a
 term that must not appear. Expect the baseline to fail that one in particular.
+
+## Non-workspace test surfaces (added in 2.2.0)
+
+Three test suites live outside the skill-workspace convention because they do
+not exercise a skill through the agent CLI:
+
+| Path | What it tests | Run with |
+| --- | --- | --- |
+| `securable-contract/test_validate.py` | The securable-contract validator: the valid example in `examples/securable/` plus twelve invalid mutations, each asserted to fail for its specific reason | `python3 tests/securable-contract/test_validate.py` |
+| `opengrep-fixtures/` | The `rules/opengrep/` pack: every `fails/` fixture must trigger its rule, every rule must fire at least once, every `passes/` fixture must stay clean | `OPENGREP_BIN=opengrep scripts/test_opengrep_rules.sh` (skips with exit 3 when opengrep is absent) |
+| `kernel-ab-workspace/` + `kernel_ab.py` | The securability kernel's effect on ordinary generation: naturalistic prompts run with and without the kernel through an agent CLI, graded by deterministic anti-pattern detectors (no LLM judge). `--self-test` verifies the detectors against the opengrep fixtures without any CLI call | `python3 tests/kernel_ab.py --self-test` (offline) · `python3 tests/kernel_ab.py` (needs the `claude` CLI) |
+
+`scripts/run_checks.sh` runs all of the offline checks in one command — the
+same set CI runs. Kernel A/B iteration outputs land in
+`kernel-ab-workspace/iteration-*/` and are gitignored like all other
+iteration artifacts.
