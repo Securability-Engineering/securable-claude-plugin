@@ -112,6 +112,7 @@ Don't enumerate all of these in code — pick the ones that *matter for this bou
 
 ## Steps (Default Mode)
 
+0. **Honor the contract, if present** — If the project contains `.securable/requirements.yaml`, it is the authoritative requirements source for the features it covers: read the matching feature's requirements and acceptance criteria before generating, and design to satisfy them. Read `.securable/boundaries.yaml` (when present) as the trust-boundary map instead of rediscovering boundaries. After generating, flip each satisfied requirement's `status: planned → implemented` in the contract file and list the flipped IDs in the Securability Notes. Never set `verified` — that flip belongs to review or CI, backed by evidence. If the generated code cannot satisfy a covered requirement, say so explicitly in the trade-offs; do not silently drop it.
 1. **Identify Context** — Language, framework, system type, data sensitivity, exposure level, trust boundaries, feature category.
 2. **Map Feature Requirements to ASVS** — Use `data/asvs/README.md` and the relevant `data/asvs/V*.md` chapters to identify the security requirements applying to the feature being generated.
 3. **Apply SSEM Constraints** — Enforce the attribute rules in the tables above. Consult `data/fiasse/S3.2.1.md`–`S3.2.3.md` for umbrella definitions.
@@ -130,7 +131,7 @@ Don't enumerate all of these in code — pick the ones that *matter for this bou
    - Defensive at trust boundaries, flexible inside (Integrity, Resilience)
    - Observable via structured logging and audit trails (Observability, Accountability)
 8. **Self-Check** — Verify against the Generation Checklist below before returning.
-9. **Verify with real tools when available** — a checklist pass is a claim; a tool run is evidence. If the project already has a formatter, linter, typechecker, or test runner, run it on the generated code and fix what it finds before returning. If a security scanner is present (semgrep, bandit, gosec, eslint security rules, `npm audit` / `pip-audit` / `osv-scanner` for the dependency step), run that too and treat its findings as review input. When no tooling exists, say so in the Securability Notes trade-offs instead of implying verification happened — and do not install new tools uninvited.
+9. **Verify with real tools when available** — a checklist pass is a claim; a tool run is evidence. If the project already has a formatter, linter, typechecker, or test runner, run it on the generated code and fix what it finds before returning. If a security scanner is present (opengrep, bandit, gosec, eslint security rules, `npm audit` / `pip-audit` / `osv-scanner` for the dependency step), run that too and treat its findings as review input. When no tooling exists, say so in the Securability Notes trade-offs instead of implying verification happened — and do not install new tools uninvited.
 
 ## Output Format
 

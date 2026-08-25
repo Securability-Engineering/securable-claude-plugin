@@ -30,11 +30,18 @@ REPO = Path(__file__).resolve().parent.parent
 SCAN_TARGETS = [
     "AGENTS.md",
     "README.md",
+    "core",
     "skills",
     "commands",
     "plays",
     "templates",
     "examples",
+]
+
+# Scanned for references too (regexes run over raw text, so YAML rule
+# metadata like `asvs: V9.1` / `fiasse: S3.2.2.3` is covered).
+EXTRA_GLOBS = [
+    "rules/**/*.yaml",
 ]
 
 ASVS_DIR = REPO / "data" / "asvs"
@@ -54,6 +61,8 @@ def iter_files() -> list[Path]:
             files.append(path)
         elif path.is_dir():
             files.extend(sorted(path.rglob("*.md")))
+    for pattern in EXTRA_GLOBS:
+        files.extend(sorted(REPO.glob(pattern)))
     return files
 
 

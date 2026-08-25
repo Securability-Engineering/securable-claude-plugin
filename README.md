@@ -13,6 +13,17 @@ This plugin augments Claude Code with three capabilities:
 
 Agent-facing guidance lives in [AGENTS.md](AGENTS.md) (the [AGENTS.md standard](https://agents.md) entry point, imported by `CLAUDE.md`). A critical assessment of this plugin and its enhancement roadmap lives in [docs/critical-review-2026-08.md](docs/critical-review-2026-08.md).
 
+## Elevating any harness
+
+Beyond the skills, the pack carries its impact in three layers so *any* code-generation harness — not only the one it's loaded into — is bound by it:
+
+1. **The securability kernel** (`core/kernel.md`) — a ~300-token always-on distillation of the non-negotiables (parse-don't-trust, server-side authority, the never-emit list, observable security, Securability Notes). `scripts/build_bindings.py` generates per-harness bindings from it — Cursor rule, Copilot instructions, Gemini CLI context, Aider conventions, and the kernel block inside AGENTS.md — with a size budget and a CI drift guard (`--check`). Bindings are generated, never edited.
+   *Measured (kernel A/B, `tests/kernel_ab.py`, deterministic detectors, claude CLI)*: on a strong frontier model the baseline already avoided all detector anti-patterns (0/0 — verified real, not detector blindness), while the kernel's process contract was adopted 3/3 (Securability Notes present) vs 0/3 baseline. Anti-pattern deltas are expected to show on weaker models — measuring that per harness is the cross-harness scoreboard's job (roadmap M5).
+2. **The securable contract** (`.securable/requirements.yaml` + `boundaries.yaml` in consuming projects) — repo-resident, machine-readable requirements with testable acceptance criteria and a `planned → implemented → verified` lifecycle. Emitted by the PRD skill, honored by generation in any harness, verified at review. `scripts/validate_securable.py` enforces the semantics — including that every cited ASVS ID exists in the bundled 5.0 catalog. See [docs/securable-contract.md](docs/securable-contract.md).
+3. **Held checks** — `rules/opengrep/securable.yaml` maps the skills' anti-pattern tags to enforceable [opengrep](https://github.com/opengrep/opengrep) rules (SSEM/ASVS metadata on each; opengrep is the LGPL, community-governed scanner), tested against paired fail/pass fixtures; and `scripts/securability_report.sh` + `.github/workflows/securability-report.yml` produce the FIASSE S5.2.1 Securability Report on pull requests via any agent CLI (`claude`, `codex`, `opencode`) — advisory by default, per S5.2.2.
+
+Run everything CI runs with `scripts/run_checks.sh`.
+
 ## Installation
 
 ### Claude Code (recommended)
@@ -90,6 +101,17 @@ The floor keeps a single catastrophic attribute from being averaged away — a s
 ```text
 AGENTS.md                          # Canonical agent entry point (AGENTS.md standard, tool-agnostic)
 CLAUDE.md                          # Thin stub importing AGENTS.md (project-mode Claude Code)
+core/
+  kernel.md                        # Securability kernel — source of truth for all bindings
+bindings/                          # GENERATED per-harness kernel bindings (never edit)
+  cursor/securable.mdc             # Cursor always-apply rule
+  copilot/copilot-instructions.md  # GitHub Copilot custom instructions
+  gemini/GEMINI.md                 # Gemini CLI context
+  aider/CONVENTIONS.md             # Aider conventions
+schema/
+  securable/                       # JSON Schemas for the securable contract (.securable/*)
+rules/
+  opengrep/securable.yaml          # Held-check rule pack mapped to the anti-pattern tags
 .claude-plugin/
   plugin.json                      # Plugin manifest (Claude Code)
   marketplace.json                 # Marketplace manifest
@@ -122,18 +144,30 @@ template/
 scripts/
   extract_fiasse_sections.py       # Utility to extract sections from FIASSE v1.1 framework markdown
   install_skills.sh                # Layout-preserving installer for opencode / other agent tools
+  build_bindings.py                # Kernel -> bindings generator (--check = CI drift guard)
+  validate_securable.py            # Securable-contract validator (shape + semantics + ASVS existence)
+  check_refs.py                    # ASVS/FIASSE reference integrity checker
+  securability_report.sh           # Merge-time Securability Report via any agent CLI
+  test_opengrep_rules.sh           # Rule-pack test runner (skips if opengrep absent)
+  run_checks.sh                    # Everything CI runs, in one command
   build_plugin_zip.sh              # Release zip builder
   generate_marketplace_json.sh     # Release marketplace manifest builder
 examples/
   prd-enhancement/                 # Before/after PRD securability enhancement example
+  securable/                       # Worked securable-contract example (requirements + boundaries)
 docs/
   critical-review-2026-08.md       # Critical assessment + enhancement plan for this plugin
-tests/                             # Skill regression tests (see Testing below)
-  run_tests.py                     # Claude Code CLI test runner
+  securable-contract.md            # The securable contract: files, lifecycle, validation
+tests/                             # Regression tests (see Testing below)
+  run_tests.py                     # Claude Code CLI test runner (skill workspaces)
+  kernel_ab.py                     # Kernel A/B runner + detector self-tests
   README.md                        # Test workspace conventions
   prd-securability-enhancement-workspace/
   securability-engineering-workspace/
   securability-engineering-review-workspace/
+  kernel-ab-workspace/             # Kernel A/B evals (naturalistic prompts, deterministic grading)
+  securable-contract/              # Contract validator tests
+  opengrep-fixtures/               # Paired fail/pass fixtures for the rule pack
 ```
 
 ## Testing

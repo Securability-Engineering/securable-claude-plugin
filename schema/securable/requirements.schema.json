@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securability.engineering/schema/securable/requirements.schema.json",
+  "title": "Securable requirements contract (.securable/requirements.yaml)",
+  "description": "Repo-resident, machine-readable securability requirements. Emitted by prd-securability-enhancement, consumed by any code-generation harness, verified at merge review. FIASSE v1.1 S4.1 (Clear Expectations) made durable. Requirements must be implementable with testable acceptance criteria — never bare control citations (S6.1.1).",
+  "type": "object",
+  "required": ["securable_contract", "asvs_level", "features"],
+  "additionalProperties": false,
+  "properties": {
+    "securable_contract": { "const": 1, "description": "Contract spec version." },
+    "asvs_level": { "enum": [1, 2, 3], "description": "Baseline ASVS 5.0 assurance level chosen for the system." },
+    "generated_by": { "type": "string", "description": "Tool/skill that emitted or last updated this file." },
+    "system": { "type": "string", "description": "Human-readable system name." },
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/feature" }
+    },
+    "cross_cutting": {
+      "type": "array",
+      "description": "Requirements spanning multiple features (central logging, secrets policy, TLS baseline).",
+      "items": { "$ref": "#/$defs/requirement" }
+    }
+  },
+  "$defs": {
+    "feature": {
+      "type": "object",
+      "required": ["id", "title", "requirements"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^F-[0-9]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "actor": { "type": "string" },
+        "data": { "type": "array", "items": { "type": "string" } },
+        "boundaries": {
+          "type": "array",
+          "description": "Boundary ids crossed by this feature; validated against .securable/boundaries.yaml when present.",
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }
+        },
+        "requirements": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/requirement" } }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "required": ["id", "text", "acceptance", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^(F-[0-9]+-R[0-9]+|CC-R[0-9]+)$" },
+        "text": { "type": "string", "minLength": 1, "description": "The implementable requirement, in plain language." },
+        "asvs": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^V[0-9]{1,2}(\\.[0-9]{1,2}){0,2}$" },
+          "description": "ASVS 5.0 references; validated against the bundled catalog by scripts/validate_securable.py."
+        },
+        "level": { "enum": [1, 2, 3], "description": "The requirement's own ASVS level, when it differs from the baseline." },
+        "escalation": { "type": "boolean", "description": "Required true when level exceeds asvs_level — above-baseline items are explicit escalations, never silent baseline." },
+        "acceptance": {
+          "description": "Behaviorally testable acceptance criteria — a test or audit can confirm pass/fail.",
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+          ]
+        },
+        "status": {
+          "enum": ["planned", "implemented", "verified"],
+          "description": "planned: written, not built. implemented: a generator/author claims the code satisfies it. verified: a review or test run confirmed the acceptance criteria — only reviews/CI flip to verified, never the generator."
+        },
+        "evidence": { "type": "string", "description": "What confirmed it (file:line, test name, report reference). Required when status is verified." },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

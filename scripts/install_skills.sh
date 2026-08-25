@@ -32,7 +32,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-COMPONENTS=(skills data plays templates)
+# Layout-preserving component set. schema/, core/, and rules/ ride along so the
+# skills' contract references (schema/securable/*, scripts/validate_securable.py)
+# and the kernel/rule pack work from an installed tree too.
+COMPONENTS=(skills data plays templates schema core rules)
+SCRIPT_FILES=(validate_securable.py)
 
 for c in "${COMPONENTS[@]}"; do
   if [[ ! -d "${REPO_ROOT}/${c}" ]]; then
@@ -54,6 +58,11 @@ for c in "${COMPONENTS[@]}"; do
     fi
   fi
   cp -R "${REPO_ROOT}/${c}" "${dest}"
+done
+
+mkdir -p "${TARGET}/scripts"
+for f in "${SCRIPT_FILES[@]}"; do
+  cp "${REPO_ROOT}/scripts/${f}" "${TARGET}/scripts/${f}"
 done
 
 echo "Installed securable skills into ${TARGET}/"

@@ -19,8 +19,14 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Validate ASVS/FIASSE references against bundled data
-        run: python3 scripts/check_refs.py
+      # Same gate CI runs — a release must not ship what a push could not.
+      # pip install is a test dependency of this repo's own checks on an
+      # ephemeral runner (see AGENTS.md, Tooling Policy).
+      - name: Install check dependencies
+        run: pip install pyyaml
+
+      - name: Run repository checks
+        run: bash scripts/run_checks.sh
 
       - name: Build plugin zip and sha
         run: bash scripts/build_plugin_zip.sh "${GITHUB_REF_NAME}"

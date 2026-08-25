@@ -12,29 +12,14 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Validate ASVS/FIASSE references against bundled data
-        run: python3 scripts/check_refs.py
+      # Test dependency of THIS repo's own checks (contract validator, YAML
+      # parsing) on an ephemeral runner — never installed into a consumer's
+      # environment. See AGENTS.md, Tooling Policy.
+      - name: Install check dependencies
+        run: pip install pyyaml
 
-      - name: Validate JSON manifests and eval sets parse
-        run: |
-          python3 - <<'EOF'
-          import json, glob, sys
-          paths = [
-              ".claude-plugin/plugin.json",
-              ".claude-plugin/marketplace.json",
-              ".claude/settings.json",
-          ] + glob.glob("tests/*/evals/evals.json")
-          for p in paths:
-              with open(p, encoding="utf-8") as f:
-                  json.load(f)
-              print(f"ok {p}")
-          EOF
-
-      - name: Shell-check build and install scripts
-        run: |
-          bash -n scripts/build_plugin_zip.sh
-          bash -n scripts/generate_marketplace_json.sh
-          bash -n scripts/install_skills.sh
+      - name: Fast checks (refs, contract, bindings, detectors, manifests, scripts)
+        run: bash scripts/run_checks.sh
 
       - name: Verify plugin layout (commands and skills at plugin root)
         run: |
@@ -44,3 +29,28 @@ jobs:
             test -f "skills/$s/SKILL.md"
           done
           echo "plugin layout ok"
+
+  opengrep-pack:
+    runs-on: ubuntu-latest
+    env:
+      OPENGREP_VERSION: v1.27.1
+      OPENGREP_SHA256: 58053da76672bbeb5b0a5441021c58338707052e10f81d777140ca879bd491ce
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      # Test dependency of THIS repo's own rule pack: a shipped pack CI cannot
+      # execute would be untested text. Pinned + checksum-verified, on an
+      # ephemeral runner only — the plugin's runtime never installs scanners
+      # into a user's project (see AGENTS.md, Tooling Policy).
+      - name: Install opengrep (pinned release, checksum-verified)
+        run: |
+          curl -fsSL -o opengrep \
+            "https://github.com/opengrep/opengrep/releases/download/${OPENGREP_VERSION}/opengrep_manylinux_x86"
+          echo "${OPENGREP_SHA256}  opengrep" | sha256sum -c -
+          chmod +x opengrep
+          sudo mv opengrep /usr/local/bin/opengrep
+          opengrep --version
+
+      - name: Test the securable rule pack against its fixtures
+        run: bash scripts/test_opengrep_rules.sh

@@ -1,0 +1,152 @@
+# Securable anti-pattern rules - the held-check floor under the instruction layer.
+# Written for opengrep (the LGPL, community-governed scanner: opengrep.dev).
+# Each rule maps to a row of the skills' Anti-Pattern Tag Reference, carrying its
+# tag, SSEM attribute, and ASVS 5.0 reference in metadata. The kernel says
+# "never emit these"; this pack proves it. Test: scripts/test_opengrep_rules.sh.
+rules:
+  - id: securable-sql-fstring
+    languages: [python]
+    severity: ERROR
+    message: >
+      SQL built with an f-string reaches execute() - trust-boundary input
+      handling violation. Use a parameterized query (placeholders + args).
+    patterns:
+      - pattern-either:
+          - pattern: $OBJ.execute(f"...", ...)
+          - pattern: $OBJ.executescript(f"...", ...)
+          - pattern: $OBJ.executemany(f"...", ...)
+    metadata: &meta-sql
+      tag: "Trust boundary input handling"
+      ssem: Integrity
+      asvs: V1.2
+      fiasse: S4.4.1
+
+  - id: securable-sql-concat
+    languages: [python]
+    severity: ERROR
+    message: >
+      SQL built by string concatenation or %-formatting reaches execute() -
+      trust-boundary input handling violation. Use a parameterized query.
+    patterns:
+      - pattern-either:
+          - pattern: $OBJ.execute("..." + $X, ...)
+          - pattern: $OBJ.execute("..." % $X, ...)
+          - pattern: $OBJ.execute($S.format(...), ...)
+    metadata: *meta-sql
+
+  - id: securable-subprocess-shell
+    languages: [python]
+    severity: WARNING
+    message: >
+      subprocess with shell=True - if any part of the command derives from
+      input, this is shell injection. Prefer an argument list with shell=False.
+    patterns:
+      - pattern: subprocess.$FUNC(..., shell=True, ...)
+      - pattern-not: subprocess.$FUNC("...", shell=True, ...)
+    metadata:
+      tag: "Trust boundary input handling"
+      ssem: Integrity
+      asvs: V1.2
+      fiasse: S4.4.1
+
+  - id: securable-jwt-decode-unpinned
+    languages: [python]
+    severity: ERROR
+    message: >
+      jwt.decode without a pinned algorithms list - token verification
+      under-specified. Pass algorithms=[...] (and audience/issuer where applicable).
+    patterns:
+      - pattern: jwt.decode(...)
+      - pattern-not: jwt.decode(..., algorithms=$A, ...)
+    metadata: &meta-jwt
+      tag: "Token verification under-specified"
+      ssem: Authenticity
+      asvs: V9.1
+      fiasse: S3.2.2.3
+
+  - id: securable-requests-no-timeout
+    languages: [python]
+    severity: WARNING
+    message: >
+      requests call without a timeout - an unbounded external call. Pass
+      timeout=... (connect/read) so a hung peer cannot hold this code forever.
+    patterns:
+      - pattern: requests.$METHOD(...)
+      - pattern-not: requests.$METHOD(..., timeout=$T, ...)
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(get|post|put|delete|head|patch|request)$
+    metadata:
+      tag: "Unbounded external call"
+      ssem: Availability
+      # No direct ASVS 5.0 anchor: outbound-call timeouts are an engineering
+      # resilience concern; the FIASSE attribute is the citation here.
+      fiasse: S3.2.3.1
+
+  - id: securable-bare-except-pass
+    languages: [python]
+    severity: WARNING
+    message: >
+      Exception swallowed silently - a failure path with no observable signal.
+      Catch specific exceptions and log with context, or re-raise.
+    patterns:
+      - pattern-either:
+          - pattern: |
+              try:
+                  ...
+              except:
+                  pass
+          - pattern: |
+              try:
+                  ...
+              except Exception:
+                  pass
+    metadata:
+      tag: "Silent failure"
+      ssem: Observability
+      asvs: V16.5
+      fiasse: S3.2.1.4
+
+  - id: securable-yaml-load-unsafe
+    languages: [python]
+    severity: ERROR
+    message: >
+      yaml.load without an explicit safe Loader can instantiate arbitrary
+      objects from input. Use yaml.safe_load (or Loader=yaml.SafeLoader).
+    patterns:
+      - pattern: yaml.load($X)
+    metadata:
+      tag: "Trust boundary input handling"
+      ssem: Integrity
+      asvs: V1.5
+      fiasse: S4.4.1
+
+  - id: securable-jwt-verify-unpinned
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: >
+      jwt.verify without an options object pinning algorithms - token
+      verification under-specified. Pass { algorithms: [...] } (and audience/issuer).
+    patterns:
+      - pattern: $JWT.verify($TOKEN, $SECRET)
+      - metavariable-regex:
+          metavariable: $JWT
+          regex: ^(jwt|jsonwebtoken)$
+    metadata: *meta-jwt
+
+  - id: securable-child-process-template
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: >
+      Shell command built from a template literal with interpolation - shell
+      injection if any interpolated part derives from input. Use execFile/spawn
+      with an argument array.
+    patterns:
+      - pattern-either:
+          - pattern: exec(`...${$X}...`, ...)
+          - pattern: execSync(`...${$X}...`, ...)
+    metadata:
+      tag: "Trust boundary input handling"
+      ssem: Integrity
+      asvs: V1.2
+      fiasse: S4.4.1

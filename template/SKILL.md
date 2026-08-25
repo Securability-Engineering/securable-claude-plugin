@@ -5,7 +5,7 @@ description: Replace with a clear description of what this skill does and when C
 
 # Skill Title
 
-Brief description referencing the full procedure: `plays/tierN-category/your-play.md`.
+Brief description referencing the full procedure: `plays/<category>/your-play.md` (existing categories: `code-analysis`, `code-generation`, `requirements-analysis`).
 
 ## Steps
 
