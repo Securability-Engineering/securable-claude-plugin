@@ -27,14 +27,23 @@ jobs:
           done
           echo "plugin layout ok"
 
-  semgrep-pack:
+  opengrep-pack:
     runs-on: ubuntu-latest
+    env:
+      OPENGREP_VERSION: v1.27.1
+      OPENGREP_SHA256: 58053da76672bbeb5b0a5441021c58338707052e10f81d777140ca879bd491ce
     steps:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Install semgrep
-        run: pip install semgrep
+      - name: Install opengrep (pinned release, checksum-verified)
+        run: |
+          curl -fsSL -o opengrep \
+            "https://github.com/opengrep/opengrep/releases/download/${OPENGREP_VERSION}/opengrep_manylinux_x86"
+          echo "${OPENGREP_SHA256}  opengrep" | sha256sum -c -
+          chmod +x opengrep
+          sudo mv opengrep /usr/local/bin/opengrep
+          opengrep --version
 
       - name: Test the securable rule pack against its fixtures
-        run: bash scripts/test_semgrep_rules.sh
+        run: bash scripts/test_opengrep_rules.sh

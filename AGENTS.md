@@ -28,13 +28,13 @@ If `.securable/requirements.yaml` exists it is the authoritative security-requir
 - `skills/<name>/SKILL.md` — Skill definitions in the [Agent Skills](https://agentskills.io) format (YAML frontmatter + instructions). These are the authoritative procedure definitions.
 - `commands/` — Thin slash-command dispatchers for Claude Code plugin installs. Each delegates to its skill; they hold no procedure content of their own.
 - `schema/securable/` — JSON Schemas for the **securable contract** (`.securable/requirements.yaml` + `.securable/boundaries.yaml` in consuming projects). See `docs/securable-contract.md`; validator: `scripts/validate_securable.py`.
-- `rules/semgrep/` — Held-check semgrep pack mapping the skills' anti-pattern tags to enforceable rules; fixtures in `tests/semgrep-fixtures/`.
+- `rules/opengrep/` — Held-check opengrep pack mapping the skills' anti-pattern tags to enforceable rules; fixtures in `tests/opengrep-fixtures/`.
 - `data/asvs/` — OWASP **ASVS 5.0** requirement chapters (V1–V17), one file per section, with `when_to_use` frontmatter. Authoritative for requirement IDs — confirm every cited ID against these files.
 - `data/fiasse/` — FIASSE v1.1 reference sections (S1.x–S8.x plus Appendix A as `SA.x`) with YAML frontmatter. Authoritative for definitions, measurement criteria, and principles.
 - `plays/` — Step-by-step runbooks sequencing multi-skill workflows.
 - `templates/` — Output format templates (`finding.md`, `report.md`).
 - `scripts/` — Build, validation, installation, and report utilities (`build_bindings.py`, `validate_securable.py`, `check_refs.py`, `securability_report.sh`, `install_skills.sh`).
-- `tests/` — Skill regression workspaces (`run_tests.py`, LLM-as-judge), the contract validator tests, the kernel A/B workspace (`kernel_ab.py`), and the semgrep fixtures.
+- `tests/` — Skill regression workspaces (`run_tests.py`, LLM-as-judge), the contract validator tests, the kernel A/B workspace (`kernel_ab.py`), and the opengrep fixtures.
 
 **Path resolution rule**: paths like `data/asvs/README.md` inside skills, commands, and plays are relative to this repository/plugin root — never to the user's project. In a Claude Code plugin install the root is `${CLAUDE_PLUGIN_ROOT}`; anywhere else, resolve relative to the referencing file's position in this tree.
 
@@ -120,7 +120,7 @@ python3 scripts/check_refs.py         # ASVS/FIASSE references resolve against d
 python3 tests/securable-contract/test_validate.py
 python3 scripts/build_bindings.py --check
 python3 tests/kernel_ab.py --self-test
-SEMGREP_BIN=semgrep scripts/test_semgrep_rules.sh   # needs semgrep installed
+OPENGREP_BIN=opengrep scripts/test_opengrep_rules.sh # needs opengrep installed
 
 # Skill-behavior regression (requires the `claude` CLI on PATH):
 python tests/run_tests.py tests/securability-engineering-workspace --grade

@@ -118,10 +118,10 @@ def print_table(results: dict, evals: list[dict]) -> None:
         f"{results['configs'][c]['notes_blocks']:>22}" for c in configs))
 
 
-FIXTURES = REPO / "tests" / "semgrep-fixtures"
+FIXTURES = REPO / "tests" / "opengrep-fixtures"
 
 # (relative fixture path, detector, expected) — shared ground truth with the
-# semgrep pack, so the A/B harness's own detectors are verifiable without any
+# opengrep pack, so the A/B harness's own detectors are verifiable without any
 # CLI call. Inline snippets cover detectors with no file fixture.
 SELF_TEST_FILES = [
     ("fails/sql.py", "fstring_sql", True),
@@ -166,7 +166,7 @@ def self_test() -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--self-test", action="store_true",
-                    help="verify the detectors against the semgrep fixtures; no CLI calls")
+                    help="verify the detectors against the opengrep fixtures; no CLI calls")
     ap.add_argument("--cli", default="claude", help="agent CLI supporting -p / --append-system-prompt (default claude)")
     ap.add_argument("--model", help="model override passed to the CLI")
     ap.add_argument("--config", choices=["baseline", "kernel"], help="run one config only")

@@ -1,13 +1,14 @@
-# Securable anti-pattern rules — the held-check floor under the instruction layer.
+# Securable anti-pattern rules - the held-check floor under the instruction layer.
+# Written for opengrep (the LGPL, community-governed scanner: opengrep.dev).
 # Each rule maps to a row of the skills' Anti-Pattern Tag Reference, carrying its
 # tag, SSEM attribute, and ASVS 5.0 reference in metadata. The kernel says
-# "never emit these"; this pack proves it. Test: scripts/test_semgrep_rules.sh.
+# "never emit these"; this pack proves it. Test: scripts/test_opengrep_rules.sh.
 rules:
   - id: securable-sql-fstring
     languages: [python]
     severity: ERROR
     message: >
-      SQL built with an f-string reaches execute() — trust-boundary input
+      SQL built with an f-string reaches execute() - trust-boundary input
       handling violation. Use a parameterized query (placeholders + args).
     patterns:
       - pattern-either:
@@ -24,7 +25,7 @@ rules:
     languages: [python]
     severity: ERROR
     message: >
-      SQL built by string concatenation or %-formatting reaches execute() —
+      SQL built by string concatenation or %-formatting reaches execute() -
       trust-boundary input handling violation. Use a parameterized query.
     patterns:
       - pattern-either:
@@ -37,7 +38,7 @@ rules:
     languages: [python]
     severity: WARNING
     message: >
-      subprocess with shell=True — if any part of the command derives from
+      subprocess with shell=True - if any part of the command derives from
       input, this is shell injection. Prefer an argument list with shell=False.
     patterns:
       - pattern: subprocess.$FUNC(..., shell=True, ...)
@@ -52,7 +53,7 @@ rules:
     languages: [python]
     severity: ERROR
     message: >
-      jwt.decode without a pinned algorithms list — token verification
+      jwt.decode without a pinned algorithms list - token verification
       under-specified. Pass algorithms=[...] (and audience/issuer where applicable).
     patterns:
       - pattern: jwt.decode(...)
@@ -67,7 +68,7 @@ rules:
     languages: [python]
     severity: WARNING
     message: >
-      requests call without a timeout — an unbounded external call. Pass
+      requests call without a timeout - an unbounded external call. Pass
       timeout=... (connect/read) so a hung peer cannot hold this code forever.
     patterns:
       - pattern: requests.$METHOD(...)
@@ -86,7 +87,7 @@ rules:
     languages: [python]
     severity: WARNING
     message: >
-      Exception swallowed silently — a failure path with no observable signal.
+      Exception swallowed silently - a failure path with no observable signal.
       Catch specific exceptions and log with context, or re-raise.
     patterns:
       - pattern-either:
@@ -124,7 +125,7 @@ rules:
     languages: [javascript, typescript]
     severity: ERROR
     message: >
-      jwt.verify without an options object pinning algorithms — token
+      jwt.verify without an options object pinning algorithms - token
       verification under-specified. Pass { algorithms: [...] } (and audience/issuer).
     patterns:
       - pattern: $JWT.verify($TOKEN, $SECRET)
@@ -137,7 +138,7 @@ rules:
     languages: [javascript, typescript]
     severity: ERROR
     message: >
-      Shell command built from a template literal with interpolation — shell
+      Shell command built from a template literal with interpolation - shell
       injection if any interpolated part derives from input. Use execFile/spawn
       with an argument array.
     patterns:

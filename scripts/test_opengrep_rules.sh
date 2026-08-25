@@ -1,33 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Test the securable semgrep pack against its fixtures:
+# Test the securable opengrep pack against its fixtures:
 #   - every fails/ fixture triggers at least one finding
 #   - every rule id fires at least once across the fails/ set
 #   - passes/ fixtures trigger nothing
 #
-# SEMGREP_BIN overrides the binary (default: semgrep on PATH).
-# Exits 0 on success, 1 on assertion failure, 3 if semgrep is unavailable.
+# OPENGREP_BIN overrides the binary (default: opengrep on PATH).
+# Exits 0 on success, 1 on assertion failure, 3 if opengrep is unavailable.
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-RULES="${REPO_ROOT}/rules/semgrep/securable.yaml"
-FIXTURES="${REPO_ROOT}/tests/semgrep-fixtures"
-SEMGREP_BIN="${SEMGREP_BIN:-semgrep}"
+RULES="${REPO_ROOT}/rules/opengrep/securable.yaml"
+FIXTURES="${REPO_ROOT}/tests/opengrep-fixtures"
+OPENGREP_BIN="${OPENGREP_BIN:-opengrep}"
 
-if ! command -v "${SEMGREP_BIN}" >/dev/null 2>&1; then
-  echo "semgrep not available (set SEMGREP_BIN or pip install semgrep) — skipping" >&2
+# opengrep reads files with the locale encoding; force UTF-8 so a C/POSIX
+# locale (containers, minimal CI images) cannot break config parsing.
+export LC_ALL="${LC_ALL:-C.UTF-8}" LANG="${LANG:-C.UTF-8}"
+
+if ! command -v "${OPENGREP_BIN}" >/dev/null 2>&1; then
+  echo "opengrep not available (set OPENGREP_BIN or install from https://github.com/opengrep/opengrep/releases) — skipping" >&2
   exit 3
 fi
 
 OUT="$(mktemp)"
 trap 'rm -f "${OUT}"' EXIT
 
-# Fixture files are passed explicitly: semgrep's default ignore patterns skip
-# tests/ directories on a directory scan, but explicit targets always scan.
+# Fixture files are passed explicitly: the scanner's default ignore patterns
+# skip tests/ directories on a directory scan, but explicit targets always scan.
 mapfile -t FIXTURE_FILES < <(find "${FIXTURES}/fails" "${FIXTURES}/passes" -type f | sort)
 
-"${SEMGREP_BIN}" scan --quiet --json --config "${RULES}" \
-  --metrics=off --no-git-ignore "${FIXTURE_FILES[@]}" > "${OUT}"
+"${OPENGREP_BIN}" scan --quiet --json --config "${RULES}" \
+  --no-git-ignore "${FIXTURE_FILES[@]}" > "${OUT}"
 
 python3 - "${OUT}" "${RULES}" "${FIXTURES}" <<'PYEOF'
 import json
@@ -74,14 +78,14 @@ for rid in sorted(silent_rules):
 
 errors = data.get("errors", [])
 for e in errors:
-    failures.append(f"semgrep error: {e.get('message', e)}")
+    failures.append(f"scanner error: {e.get('message', e)}")
 
 if failures:
-    print(f"\n{len(failures)} semgrep pack failure(s):")
+    print(f"\n{len(failures)} opengrep pack failure(s):")
     for f in failures:
         print(f"  FAIL {f}")
     sys.exit(1)
-print(f"\nAll semgrep pack tests passed ({len(rule_ids)} rules, "
+print(f"\nAll opengrep pack tests passed ({len(rule_ids)} rules, "
       f"{sum(1 for _ in fails_dir.iterdir())} fail fixtures, "
       f"{sum(1 for _ in passes_dir.iterdir())} pass fixtures).")
 PYEOF

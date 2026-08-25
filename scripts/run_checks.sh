@@ -2,8 +2,8 @@
 set -uo pipefail
 
 # Run every fast check CI runs, in one command. Exits non-zero if any fails.
-# The semgrep pack check is skipped (with a notice) when semgrep is missing;
-# set SEMGREP_BIN to point at a specific binary.
+# The opengrep pack check is skipped (with a notice) when opengrep is missing;
+# set OPENGREP_BIN to point at a specific binary.
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${REPO_ROOT}"
@@ -30,23 +30,23 @@ paths = [".claude-plugin/plugin.json", ".claude-plugin/marketplace.json", ".clau
 paths += glob.glob("tests/*/evals/evals.json") + ["tests/kernel-ab-workspace/evals.json"]
 for p in paths:
     json.load(open(p)); print(f"ok {p}")
-for p in ["rules/semgrep/securable.yaml", "examples/securable/requirements.yaml", "examples/securable/boundaries.yaml"]:
+for p in ["rules/opengrep/securable.yaml", "examples/securable/requirements.yaml", "examples/securable/boundaries.yaml"]:
     yaml.safe_load(open(p)); print(f"ok {p}")
 EOF
 run bash -n scripts/build_plugin_zip.sh
 run bash -n scripts/generate_marketplace_json.sh
 run bash -n scripts/install_skills.sh
 run bash -n scripts/securability_report.sh
-run bash -n scripts/test_semgrep_rules.sh
+run bash -n scripts/test_opengrep_rules.sh
 
 echo
-echo "== semgrep pack =="
-if bash scripts/test_semgrep_rules.sh; then :; else
+echo "== opengrep pack =="
+if bash scripts/test_opengrep_rules.sh; then :; else
   code=$?
   if [[ $code -eq 3 ]]; then
-    echo "semgrep unavailable — pack check skipped (install semgrep to run it)"
+    echo "opengrep unavailable — pack check skipped (install opengrep to run it)"
   else
-    echo "^^ FAILED: semgrep pack" >&2
+    echo "^^ FAILED: opengrep pack" >&2
     FAILED=1
   fi
 fi

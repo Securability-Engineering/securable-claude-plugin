@@ -131,7 +131,7 @@ Don't enumerate all of these in code — pick the ones that *matter for this bou
    - Defensive at trust boundaries, flexible inside (Integrity, Resilience)
    - Observable via structured logging and audit trails (Observability, Accountability)
 8. **Self-Check** — Verify against the Generation Checklist below before returning.
-9. **Verify with real tools when available** — a checklist pass is a claim; a tool run is evidence. If the project already has a formatter, linter, typechecker, or test runner, run it on the generated code and fix what it finds before returning. If a security scanner is present (semgrep, bandit, gosec, eslint security rules, `npm audit` / `pip-audit` / `osv-scanner` for the dependency step), run that too and treat its findings as review input. When no tooling exists, say so in the Securability Notes trade-offs instead of implying verification happened — and do not install new tools uninvited.
+9. **Verify with real tools when available** — a checklist pass is a claim; a tool run is evidence. If the project already has a formatter, linter, typechecker, or test runner, run it on the generated code and fix what it finds before returning. If a security scanner is present (opengrep, bandit, gosec, eslint security rules, `npm audit` / `pip-audit` / `osv-scanner` for the dependency step), run that too and treat its findings as review input. When no tooling exists, say so in the Securability Notes trade-offs instead of implying verification happened — and do not install new tools uninvited.
 
 ## Output Format
 
