@@ -34,7 +34,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install agent CLI
+      # CONSUMER DECISION POINT — provision YOUR team's agent CLI.
+      # CI runners are ephemeral, so this workflow (yours, once copied) must
+      # provision whatever agent CLI your team already uses; the plugin itself
+      # never installs tools into your project (see AGENTS.md, Tooling Policy).
+      # Replace this step accordingly — e.g. a preinstalled self-hosted runner
+      # needs no step at all. The line below is one example, not a default.
+      - name: Provision agent CLI (replace with your team's choice)
         run: npm install -g @anthropic-ai/claude-code
 
       - name: Produce report

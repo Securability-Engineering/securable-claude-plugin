@@ -83,6 +83,16 @@ Answer FIASSE/SSEM questions (definitions, principles, attributes, scoring condu
 9. **Scoring Is Directional** — A composite SSEM score is a management aid for tracking a system against itself, never a statement of assurance or compliance (SA.4).
 10. **Evidence over Assertion** — Cite what was actually read or run. Mark what wasn't inspected `Not assessed`; never fabricate file paths, requirement IDs, or tool results.
 
+## Tooling Policy (third-party tools)
+
+Usage is endorsement, and installation is intrusion. Three tiers, strictly separated:
+
+1. **Runtime (skills, kernel, commands — anything acting in a user's project): never install.** Use the tools already present; when a check cannot run because tooling is absent, say so instead of implying verification happened. That absence is itself evidence (Testability/Observability). Both the generation and review skills state this explicitly.
+2. **This repository's own CI: pinned, verified test dependencies only.** CI installs exactly what is needed to test the artifacts this repo ships (currently PyYAML for the validators and a version-pinned, checksum-verified opengrep release to prove the rule pack fires) — on ephemeral runners, never in a consumer's environment. A shipped rule pack CI cannot execute would be untested text.
+3. **Reference workflows for consuming repositories: provisioning is the consumer's explicit decision.** CI runners are ephemeral, so a consumer's workflow must provision its own agent CLI; the example marks that step as theirs to replace with whatever their team already runs.
+
+Only community-governed, non-commercial tools may be named or used anywhere in this repository (e.g., opengrep, not commercially licensed scanners).
+
 ## SSEM Model Quick Reference (v1.1 — 10 attributes)
 
 | **Maintainability** | **Trustworthiness** | **Reliability** |

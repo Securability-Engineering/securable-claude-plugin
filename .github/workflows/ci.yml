@@ -12,6 +12,9 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      # Test dependency of THIS repo's own checks (contract validator, YAML
+      # parsing) on an ephemeral runner — never installed into a consumer's
+      # environment. See AGENTS.md, Tooling Policy.
       - name: Install check dependencies
         run: pip install pyyaml
 
@@ -36,6 +39,10 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      # Test dependency of THIS repo's own rule pack: a shipped pack CI cannot
+      # execute would be untested text. Pinned + checksum-verified, on an
+      # ephemeral runner only — the plugin's runtime never installs scanners
+      # into a user's project (see AGENTS.md, Tooling Policy).
       - name: Install opengrep (pinned release, checksum-verified)
         run: |
           curl -fsSL -o opengrep \
