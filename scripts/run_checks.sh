@@ -23,9 +23,11 @@ run python3 scripts/validate_securable.py --dir examples/securable
 run python3 tests/securable-contract/test_validate.py
 run python3 scripts/build_bindings.py --check
 run python3 tests/kernel_ab.py --self-test
+run python3 scripts/check_manifests.py
 run python3 - <<'EOF'
 import json, glob, sys, yaml
 paths = [".claude-plugin/plugin.json", ".claude-plugin/marketplace.json", ".claude/settings.json",
+         ".cursor-plugin/plugin.json", ".devin-plugin/plugin.json",
          "schema/securable/requirements.schema.json", "schema/securable/boundaries.schema.json"]
 paths += glob.glob("tests/*/evals/evals.json") + ["tests/kernel-ab-workspace/evals.json"]
 for p in paths:

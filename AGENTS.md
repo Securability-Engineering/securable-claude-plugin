@@ -24,6 +24,7 @@ If `.securable/requirements.yaml` exists it is the authoritative security-requir
 ## Repository Layout
 
 - `core/kernel.md` — The **securability kernel**: the ~300-token always-on distillation. Single source of truth; every binding is generated from it.
+- `.claude-plugin/`, `.cursor-plugin/`, `.devin-plugin/`, `.opencode/`, `.agents/` — **Per-agent install adapters** (superpowers-style): one manifest or agent-followable `INSTALL.md` per harness, all pointing at the same `skills/` + `data/` tree. `.claude-plugin/plugin.json` is the canonical version source; `scripts/check_manifests.py` keeps the rest in lockstep.
 - `bindings/` — **Generated** per-harness kernel bindings (Cursor rule, Copilot instructions, Gemini CLI context, Aider conventions). Never edit — run `scripts/build_bindings.py`.
 - `skills/<name>/SKILL.md` — Skill definitions in the [Agent Skills](https://agentskills.io) format (YAML frontmatter + instructions). These are the authoritative procedure definitions.
 - `commands/` — Thin slash-command dispatchers for Claude Code plugin installs. Each delegates to its skill; they hold no procedure content of their own.
@@ -115,10 +116,12 @@ Only community-governed, non-commercial tools may be named or used anywhere in t
 
 ## Using This Pack With Different Tools
 
-- **Claude Code (plugin)** — install via the plugin manager (`/plugin`); skills, commands, and data ship together. Skill and command paths resolve via `${CLAUDE_PLUGIN_ROOT}`.
+- **Claude Code (plugin)** — install via the plugin manager (`/plugin`); skills, commands, and data ship together. Skill and command paths resolve via `${CLAUDE_PLUGIN_ROOT}`. Manifest: `.claude-plugin/plugin.json`.
 - **Claude Code (this repo as a project)** — for plugin development, run `claude --plugin-dir .` so commands and skills load exactly as an install would.
-- **opencode** — run `scripts/install_skills.sh --target .opencode` inside a project (or `--target "$HOME/.config/opencode"` for global use). opencode also discovers `.claude/skills/` and `.agents/skills/`; the installer supports those targets too.
-- **Other AGENTS.md tools (Codex, Cursor, Gemini CLI, Zed, …)** — this file is read natively when the repo (or an installed copy) is in scope; skills follow the Agent Skills standard and can be installed with the same script.
+- **Cursor** — plugin manifest at `.cursor-plugin/plugin.json` (`skills` points at the shared `skills/` tree); the always-apply kernel rule ships pre-generated at `bindings/cursor/securable.mdc`.
+- **Devin** — `devin plugins install Securability-Engineering/securable-claude-plugin`; manifest at `.devin-plugin/plugin.json`.
+- **opencode** — fetch-and-follow `.opencode/INSTALL.md`, or run `scripts/install_skills.sh --target .opencode` inside a project (or `--target "$HOME/.config/opencode"` for global use). opencode also discovers `.claude/skills/` and `.agents/skills/`; the installer supports those targets too.
+- **Other AGENTS.md tools (Codex, Gemini CLI, Zed, Amp, …)** — this file is read natively when the repo (or an installed copy) is in scope; skills follow the Agent Skills standard. Fetch-and-follow `.agents/INSTALL.md`, or install with the same script (`--target .agents`).
 
 `scripts/install_skills.sh` performs a layout-preserving copy (`skills/`, `data/`, `plays/`, `templates/` under one root), which is what keeps the relative references inside the skills working unchanged.
 
