@@ -50,14 +50,14 @@ DETECTORS: dict[str, tuple[str, str]] = {
 
 def detect(name: str, text: str) -> bool:
     if name == "requests_no_timeout":
-        calls = re.finditer(r"\brequests\.(?:get|post|put|delete|head|request)\s*\((?P<args>[^)]*)\)",
+        calls = re.finditer(rf"\brequests\.(?:get|post|put|patch|delete|head|request)\s*\((?P<args>{CALL_ARGS_ONE_NEST})\)",
                             text, flags=re.S)
         for match in calls:
             if not re.search(r"\btimeout\s*=", match.group("args")):
                 return True
         return False
     if name == "jwt_verify_unpinned":
-        calls = re.finditer(r"\bjwt\.verify\s*\((?P<args>[^)]*)\)", text, flags=re.S)
+        calls = re.finditer(rf"\bjwt\.verify\s*\((?P<args>{CALL_ARGS_ONE_NEST})\)", text, flags=re.S)
         for match in calls:
             if not re.search(r"\balgorithms\s*:", match.group("args")):
                 return True
@@ -128,6 +128,7 @@ def print_table(results: dict, evals: list[dict]) -> None:
 
 
 FIXTURES = REPO / "tests" / "opengrep-fixtures"
+CALL_ARGS_ONE_NEST = r"[^()]*(?:\([^()]*\)[^()]*)*"
 
 # (relative fixture path, detector, expected) — shared ground truth with the
 # opengrep pack, so the A/B harness's own detectors are verifiable without any
@@ -149,6 +150,8 @@ SELF_TEST_FILES = [
 SELF_TEST_SNIPPETS = [
     ("try { x(); } catch (e) {}", "bare_catch", True),
     ("try { x(); } catch (e) { log.warn('x failed', e); }", "bare_catch", False),
+    ("requests.get(build_url(base, path), timeout=5)", "requests_no_timeout", False),
+    ("jwt.verify(token, getSecret(env), { algorithms: ['HS256'] })", "jwt_verify_unpinned", False),
 ]
 
 
